@@ -1,0 +1,43 @@
+{
+"name":"Ster Longhorn, Minotaur Chief",
+"hp": 45,
+"hd": 6,
+"alignment": "CE",
+"size": "Large",
+"type": "monstrous humanoid",
+"init": "+0",
+"senses": "darkvision 60 ft., scent",
+"skills": {
+    "Listen": "+11",
+    "Spot": "+11",
+    "Intimidate": "+3",
+    "Search": "+4"
+    },
+"ac": {
+    "base": "19",
+    "touch": "13",
+    "flat": "—"
+    },
+"saves": {
+    "fort": "+6",
+    "ref": "+5",
+    "will": "+5"
+    },
+"attack": "mwk greataxe +11/+6 (3d6+7/×3) and gore +5 (1d8+3)",
+"fullAttack": "mwk greataxe +11/+6 (3d6+7/×3) and gore +5 (1d8+3)",
+"space": 10,
+"reach": 10,
+"bab": 6,
+"grapple": 15,
+"abilities": {
+    "str": 21,
+    "dex": 10,
+    "con": 15,
+    "int": 10,
+    "wis": 10,
+    "cha": 8
+    },
+"feats": "Great Fortitude, Power Attack, Track",
+"speed": "30 ft.",
+"moves": []
+}

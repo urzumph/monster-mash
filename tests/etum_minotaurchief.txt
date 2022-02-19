@@ -1,0 +1,25 @@
+Ster Longhorn, Minotaur Chief
+ CR 4
+hp 45 (6 HD)
+CE Large monstrous humanoid
+Init +0; Senses darkvision 60 ft., scent; Listen +11, Spot
++11
+Languages Giant, Common
+AC 19, touch 13, flat-footed —; natural cunning
+Fort +6, Ref +5, Will +5
+Speed 30 ft. (6 squares)
+Melee mwk greataxe +11/+6 (3d6+7/×3) and
+gore +5 (1d8+3)
+Space 10 ft.; Reach 10 ft.
+Base Atk +6; Grp +15
+Atk Options Power Attack
+Special Actions powerful charge 4d6+7
+Combat Gear Kyo crystal of cure light wounds, 2 Kyo crystals
+of cure serious wounds, Kyo crystal of mage armor
+(already used and calculated into statistics), Kyo crystal
+of mirror image)
+Abilities Str 21, Dex 10, Con 15, Int 10, Wis 10, Cha 8
+Feats Great Fortitude, Power Attack, Track
+Skills Intimidate +3, Listen +11, Search +4, Spot +11
+Possessions combat gear plus masterwork greataxe,
+100 gp worth of raw Kyo crystals, 200 gp

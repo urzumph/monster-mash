@@ -1,0 +1,32 @@
+Psi-Hulk
+hp 113 (12 HD); DR 2/—
+CR 9
+Umber hulk psychic warriorEPH 4
+CE Large aberration
+Init +1; Senses darkvision 60 ft., tremorsense 60 ft., Listen
++13, Spot +2
+Languages Terran
+AC 22, touch 10, flat-footed 21
+Fort +11, Ref +4, Will +9
+Speed 20 ft. (4 squares), burrow 20 ft.
+Melee 2 claws +14 each (2d4+6) and
+bite +12 (2d8+3)
+Space 10 ft.; Reach 10 ft.
+Base Atk +9; Grp +19
+Atk Options confusing gaze
+Power Points/Day: 9 (6 used); Powers Known (ML 4th):
+2nd—psionic lion’s charge
+1st—biofeedback, inertial armor, vigor (all already used
+and figured into the monster’s statistics)
+Abilities Str 23, Dex 13, Con 17, Int 11, Wis 15, Cha 15
+Feats Great Fortitude, Greater Psionic Fist, Multiattack,
+Psionic Fist, Psionic Meditation, Skill Focus
+(Concentration), Toughness
+Skills Climb +12, Concentration +14, Jump +5, Listen +13
+Confusing Gaze (Su) Confusion as the spell, 30 feet, caster
+level 12th, Will DC 16 negates.
+Psionic Lion’s Charge (Su) The psi-hulk spends its 3
+remaining power points to activate this ability. When
+the ability is activated, the creature gains the powerful
+charge of a lion. When it charges, it can make a full
+attack in the same round.
