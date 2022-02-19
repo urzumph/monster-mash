@@ -6,5 +6,6 @@ Create a new virtual environment with
 
 ```
 python -m venv .venv/mm
+source .venv/mm/bin/activate
 pip install -r requirements.txt
 ```
