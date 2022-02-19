@@ -10,7 +10,7 @@ class TestMonsterMash(unittest.TestCase):
         test = ["ONE", "PURPLE", "TWO\n", "THREE"]
         until = re.compile("^T")
         untilNever = re.compile("^Z")
-        resultZero = monstermanual.accum_until(0, until, test)
+        resultZero = monstermash.accum_until(0, until, test)
         self.assertEqual(resultZero, "ONE PURPLE")
         resultOne = monstermash.accum_until(1, until, test)
         self.assertEqual(resultOne, "PURPLE")
