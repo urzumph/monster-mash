@@ -1,9 +1,10 @@
 import unittest
+import re
 from . import parser
 
 
 class TestParser(unittest.TestCase):
-    def expect_frag_a(self, text, charsheet):
+    def expect_frag_a(self, charsheet, text, **kwargs):
         self.assertEqual(text, "a")
 
     def test_fragment(self):
@@ -19,6 +20,14 @@ class TestParser(unittest.TestCase):
         pobj = parser.Parser("test parser", None, index=0)
         self.assertEqual(pobj.match(0, frag), True)
         self.assertEqual(pobj.match(1, frag), False)
+
+    def test_parser_match_re(self):
+        frag = parser.Fragment("a")
+        matcher = re.compile("^a$")
+        pobj = parser.Parser("test regex", self.expect_frag_a, regex=matcher)
+        self.assertEqual(pobj.match(0, frag), True)
+        # Ignore the index if one isn't provided
+        self.assertEqual(pobj.match(1, frag), True)
 
     def test_document(self):
         pobj = parser.Parser("test parser", self.expect_frag_a, index=0)

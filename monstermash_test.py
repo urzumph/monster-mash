@@ -6,6 +6,9 @@ import re
 
 
 class TestMonsterMash(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+
     def test_accum_until(self):
         test = ["ONE", "PURPLE", "TWO\n", "THREE"]
         until = re.compile("^T")
@@ -27,7 +30,6 @@ class TestMonsterMash(unittest.TestCase):
     tests = ["etum_minotaurchief", "etum_psihulk"]
 
     def test_parse(self):
-        self.maxDiff = None
         for t in self.tests:
             text = pathlib.Path("tests/" + t + ".txt").read_text()
             tarr = text.split("\n")

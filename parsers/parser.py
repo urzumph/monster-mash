@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# TODO: Proper logging to avoid print statements
 
 
 class Fragment:
@@ -19,10 +20,14 @@ class Fragment:
 
 
 class Parser:
-    def __init__(self, name, actuator, index=None, accumulater=False, bam=False):
+    def __init__(
+        self, name, actuator, index=None, regex=None, accumulater=False, bam=False
+    ):
         self.name = name
         self._actuator = actuator
         self._index = index
+        self._regex = regex
+        self._rematch = None
         self.accumulater = accumulater
         # Break after match
         self.bam = bam
@@ -33,10 +38,16 @@ class Parser:
             if idx == self._index:
                 self.text = frag.string
                 return True
+        if self._regex is not None:
+            m = self._regex.search(frag.string)
+            if m:
+                self._rematch = m
+                self.text = m.group(0)
+                return True
         return False
 
     def actuate(self, charsheet):
-        self._actuator(self.text, charsheet)
+        self._actuator(charsheet, text=self.text, rematch=self._rematch)
 
 
 class Document:
@@ -57,6 +68,6 @@ class Document:
                 match = parser.match(idx, frag)
                 if match:
                     frag.register_match(parser.name)
-                # TODO: handle accumulation, BAM
-                parser.actuate(charsheet)
-                break
+                    # TODO: handle accumulation, BAM
+                    parser.actuate(charsheet)
+                    break
