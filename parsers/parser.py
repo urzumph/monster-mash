@@ -12,6 +12,9 @@ class Fragment:
         self.matched = True
         self.matcher = mid
 
+    def as_dict(self):
+        return {"string": self.string, "matched": self.matched, "matcher": self.matcher}
+
     def __str__(self):
         if self.matched:
             return f"'{self.string}' - Matched by {self.matcher}"
@@ -49,12 +52,31 @@ class Parser:
     def actuate(self, charsheet):
         self._actuator(charsheet, text=self.text, rematch=self._rematch)
 
+    def split(self, frag):
+        """Given a fragment which this parser match()'d,
+        modify the fragment to include only the matched text
+        from the match() and return a new fragment containing
+        all of the remaining text."""
+        end = self._rematch.end()
+        if end < len(frag.string):
+            newfrag = Fragment(frag.string[end:])
+            frag.string = frag.string[0:end]
+            return newfrag
+        else:
+            return False
+
 
 class Document:
     def __init__(self, strarray):
         self.frags = []
         for s in strarray:
             self.frags.append(Fragment(s))
+
+    def stats(self):
+        res = []
+        for f in self.frags:
+            res.append(f.as_dict())
+        return res
 
     def __str__(self):
         s = ""
@@ -68,6 +90,15 @@ class Document:
                 match = parser.match(idx, frag)
                 if match:
                     frag.register_match(parser.name)
-                    # TODO: handle accumulation, BAM
+                    # TODO: handle accumulation
                     parser.actuate(charsheet)
+                    if parser.bam:
+                        remainder = parser.split(frag)
+                        if remainder:
+                            self.frags = (
+                                self.frags[0 : idx + 1]
+                                + [remainder]
+                                + self.frags[idx + 1 :]
+                            )
+
                     break

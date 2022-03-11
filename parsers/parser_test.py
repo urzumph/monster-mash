@@ -29,11 +29,32 @@ class TestParser(unittest.TestCase):
         # Ignore the index if one isn't provided
         self.assertEqual(pobj.match(1, frag), True)
 
+    def test_parser_bam(self):
+        doc = parser.Document(["012", "abc"])
+        matcher = re.compile("^a")
+        pobj = parser.Parser("test", self.expect_frag_a, regex=matcher, bam=True)
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "012", "matched": False, "matcher": None},
+                {"string": "a", "matched": True, "matcher": "test"},
+                {"string": "bc", "matched": False, "matcher": None},
+            ],
+        )
+
     def test_document(self):
         pobj = parser.Parser("test parser", self.expect_frag_a, index=0)
         doc = parser.Document(["a", "b"])
         doc.parse([pobj], None)
         self.assertEqual(f"{doc}", "'a' - Matched by test parser\n'b' - Unmatched\n")
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "a", "matched": True, "matcher": "test parser"},
+                {"string": "b", "matched": False, "matcher": None},
+            ],
+        )
 
 
 if __name__ == "__main__":

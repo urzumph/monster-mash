@@ -10,7 +10,8 @@ class TestEtumParser(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
 
-    tests = ["etum_minotaurchief", "etum_psihulk"]
+    # tests = ["etum_minotaurchief", "etum_psihulk"]
+    tests = ["etum_psihulk"]
 
     # TODO: ng parser still missing a bunch of parsing options
     @unittest.expectedFailure
