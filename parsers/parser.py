@@ -24,16 +24,28 @@ class Fragment:
 
 class Parser:
     def __init__(
-        self, name, actuator, index=None, regex=None, accumulater=False, bam=False
+        self,
+        name,
+        actuator,
+        index=None,
+        regex=None,
+        accumulate=False,
+        accum_end_regex=None,
+        bam=False,
     ):
         self.name = name
         self._actuator = actuator
         self._index = index
         self._regex = regex
         self._rematch = None
-        self.accumulater = accumulater
+        self.accumulater = accumulate
+        self._end_regex = accum_end_regex
+        if self.accumulater and not self._end_regex:
+            raise ValueError("In accumulater mode, an end regex is required")
         # Break after match
         self.bam = bam
+        if self.accumulater and self.bam:
+            raise ValueError("Cannot use accumulation and break-after-match together")
 
     def match(self, idx, frag):
         self.text = ""
@@ -45,7 +57,12 @@ class Parser:
             m = self._regex.search(frag.string)
             if m:
                 self._rematch = m
-                self.text = m.group(0)
+                if self.accumulater:
+                    # When accumulating, we need the whole string even if the
+                    # match did not cover the whole line.
+                    self.text = frag.string
+                else:
+                    self.text = m.group(0)
                 return True
         return False
 
@@ -64,6 +81,16 @@ class Parser:
             return newfrag
         else:
             return False
+
+    def accumulate(self, idx, frag):
+        """Determine whether the passed fragment is the end of the accumulated
+        text, and if not add it to the gathered text of this parser."""
+        m = self._end_regex.search(frag.string)
+        if m:
+            return True
+        else:
+            self.text += frag.string
+        return False
 
 
 class Document:
@@ -86,19 +113,39 @@ class Document:
 
     def parse(self, parsers, charsheet):
         for parser in parsers:
+            accum = False
+            end_accum = False
             for idx, frag in enumerate(self.frags):
-                match = parser.match(idx, frag)
-                if match:
-                    frag.register_match(parser.name)
-                    # TODO: handle accumulation
-                    parser.actuate(charsheet)
-                    if parser.bam:
-                        remainder = parser.split(frag)
-                        if remainder:
-                            self.frags = (
-                                self.frags[0 : idx + 1]
-                                + [remainder]
-                                + self.frags[idx + 1 :]
-                            )
+                if accum:
+                    # We have already matched and are accumulating
+                    end_accum = parser.accumulate(idx, frag)
+                    if end_accum:
+                        parser.actuate(charsheet)
+                        break
+                    else:
+                        frag.register_match(parser.name)
+                else:
+                    # Not accumulating (yet or at all)
+                    match = parser.match(idx, frag)
+                    if match:
+                        frag.register_match(parser.name)
+                        if parser.accumulater:
+                            accum = True
+                            continue
+                        parser.actuate(charsheet)
+                        if parser.bam:
+                            remainder = parser.split(frag)
+                            if remainder:
+                                self.frags = (
+                                    self.frags[0 : idx + 1]
+                                    + [remainder]
+                                    + self.frags[idx + 1 :]
+                                )
 
-                    break
+                        break
+            else:
+                if accum:
+                    # We accumulated all the way to the end of the document.
+                    parser.actuate(charsheet)
+                else:
+                    print(f"Warning: No text matched parser {parser.name}")

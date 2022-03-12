@@ -9,3 +9,6 @@ python -m venv .venv/mm
 source .venv/mm/bin/activate
 pip install -r requirements.txt
 ```
+
+## Running one specific test:
+python -m unittest parsers.parser_test.TestParser.test_parser_bam
