@@ -13,3 +13,19 @@ class RegexIter:
         else:
             self.remainder = self.remainder[len(m.group(0)) :]
             return m
+
+
+def prechomp_regex(string, regex):
+    m = regex.match(string)
+    if not m:
+        return string
+    else:
+        return string[len(m.group(0)) :]
+
+
+def split_from(string, regex):
+    m = regex.search(string)
+    if m:
+        return string[0 : m.start()], string[m.start() :]
+    else:
+        return string, None

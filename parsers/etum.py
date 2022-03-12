@@ -2,6 +2,30 @@ import re
 from . import parser
 from . import utils
 
+# Regular expression definitions
+
+# Init +0; Senses darkvision 60 ft., scent; Listen +11, Spot
+# +11
+# Languages Giant, Common
+init_re = re.compile("^\s*Init ([+\-\–]\d+);")
+senses_re = re.compile("^\s*Senses ")
+senses_end_re = re.compile("(;|Listen|Spot)")
+lang_re = re.compile("^Languages ")
+# Skills Intimidate +3, Listen +11, Search +4, Spot +11
+skills_re = re.compile("^\s*Skills (.*)")
+# Listen +11, Spot +11
+skill_split_re = re.compile("^\s*(\w+) ([+\-]\d+)[,;]?\s*")
+
+# Used in multiple places, so adding to the start
+def inner_skills(charsheet, text, **kwargs):
+    print(f"inner_skills@start:{text}")
+    rxi = utils.RegexIter(text, skill_split_re)
+    for m in iter(rxi):
+        print(f"inner_skills@for:{m.group(1)}")
+        charsheet["skills"][m.group(1)] = m.group(2)
+    print("Left over from inner_skills: ", rxi.remainder)
+
+
 # Ster Longhorn, Minotaur Chief
 def name(charsheet, text, **kwargs):
     charsheet["name"] = text.strip()
@@ -35,24 +59,16 @@ def mtype(charsheet, rematch, **kwargs):
     charsheet["type"] = rematch.group(3).strip()
 
 
-# Init +0; Senses darkvision 60 ft., scent; Listen +11, Spot
-# +11
-# Languages Giant, Common
-init_re = re.compile("^\s*Init ([+\-\–]\d+);")
-
-
 def init(charsheet, rematch, **kwargs):
     charsheet["init"] = rematch.group(1)
 
 
-# TODO: Needs either to be re-written to accumulate
-# and set skills as well, or to have some kind of
-# match-immediately-after matcher
-# senses_re = re.compile("^\s*Senses (.+)(?!(;|Listen|Spot))")
+def senses(charsheet, text, **kwargs):
+    text = utils.prechomp_regex(text, senses_re)
+    senses, remainder = utils.split_from(text, senses_end_re)
+    charsheet["senses"] = senses.rstrip(", ")
+    inner_skills(charsheet, remainder.replace("\n", " "))
 
-# def senses(charsheet, rematch, **kwargs):
-#    senses = rematch.group(1)
-#    charsheet["senses"] = senses.rstrip(", ")
 
 # AC 19, touch 13, flat-footed —; natural cunning
 ac_re = re.compile("^\s*AC ([\d\—]+), touch ([\d\—]+), flat-footed ([\d\—]+)")
@@ -109,18 +125,8 @@ def abilities(charsheet, rematch, **kwargs):
     charsheet["abilities"]["cha"] = int(rematch.group(6))
 
 
-# Skills Intimidate +3, Listen +11, Search +4, Spot +11
-skills_re = re.compile("^\s*Skills (.*)")
-# Listen +11, Spot +11
-skill_split_re = re.compile("^\s*(\w+) ([+\-]\d+)[,;]?\s*")
-
-
 def skills(charsheet, rematch, **kwargs):
-    text = rematch.group(1)
-    rxi = utils.RegexIter(text, skill_split_re)
-    for m in iter(rxi):
-        charsheet["skills"][m.group(1)] = m.group(2)
-    print("Left over from skills: ", rxi.remainder)
+    inner_skills(charsheet, rematch.group(1))
 
 
 # Speed 30 ft. (6 squares)
@@ -138,6 +144,13 @@ parsers = [
     parser.Parser("etum_dr", dr, regex=dr_re),
     parser.Parser("etum_type", mtype, regex=mtype_re),
     parser.Parser("etum_init", init, regex=init_re, bam=True),
+    parser.Parser(
+        "etum_senses",
+        senses,
+        regex=senses_re,
+        accumulate=True,
+        accum_end_regex=lang_re,
+    ),
     parser.Parser("etum_ac", ac, regex=ac_re),
     parser.Parser("etum_saves", saves, regex=saves_re),
     parser.Parser("etum_space", space, regex=space_re),

@@ -19,7 +19,7 @@ class TestParser(unittest.TestCase):
 
     def expect_numbers(self, charsheet, text, **kwargs):
         self.add_call("expect_numbers")
-        self.assertEqual(text, "012345678")
+        self.assertEqual(text, "012 345 678")
 
     def test_fragment(self):
         frag = parser.Fragment("a")

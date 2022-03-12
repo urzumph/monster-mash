@@ -89,6 +89,9 @@ class Parser:
         if m:
             return True
         else:
+            # if none already exists, force whitespace at line breaks
+            if self.text[-1] != " ":
+                self.text += " "
             self.text += frag.string
         return False
 

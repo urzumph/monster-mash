@@ -18,3 +18,23 @@ class TestUtils(unittest.TestCase):
                 self.fail(f"Got unexpected count: {count}")
             count += 1
         self.assertEqual(rxi.remainder, "potato")
+
+    def test_prechomp_regex(self):
+        s = "pre post"
+        r = re.compile("^pre ?")
+        result = utils.prechomp_regex(s, r)
+        self.assertEqual(result, "post")
+        r = re.compile("potato")
+        result = utils.prechomp_regex(s, r)
+        self.assertEqual(result, "pre post")
+
+    def test_split_from(self):
+        s = "pre post"
+        r = re.compile(" ")
+        left, right = utils.split_from(s, r)
+        self.assertEqual(left, "pre")
+        self.assertEqual(right, " post")
+        r = re.compile("potato")
+        left, right = utils.split_from(s, r)
+        self.assertEqual(left, s)
+        self.assertEqual(right, None)
