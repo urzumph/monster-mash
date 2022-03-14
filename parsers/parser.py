@@ -114,41 +114,59 @@ class Document:
             s += f"{f}\n"
         return s
 
+    def single_pass(self, parser, charsheet, offset):
+        accum = False
+        end_accum = False
+        for idx, frag in enumerate(self.frags[offset:], offset):
+            # print(f"enumerate: idx: {idx} frag: {frag}")
+            if accum:
+                # We have already matched and are accumulating
+                end_accum = parser.accumulate(idx, frag)
+                if end_accum:
+                    # print("accum actuate")
+                    parser.actuate(charsheet)
+                    # Returned index needs to be last of the matching lines for this pass.
+                    return idx - 1
+                else:
+                    frag.register_match(parser.name)
+            else:
+                # Not accumulating (yet or at all)
+                match = parser.match(idx, frag)
+                if match:
+                    frag.register_match(parser.name)
+                    if parser.accumulater:
+                        accum = True
+                        continue
+                    # print("non-accum actuate")
+                    parser.actuate(charsheet)
+                    if parser.bam:
+                        remainder = parser.split(frag)
+                        if remainder:
+                            self.frags = (
+                                self.frags[0 : idx + 1]
+                                + [remainder]
+                                + self.frags[idx + 1 :]
+                            )
+
+                    return idx
+        else:
+            if accum:
+                # We accumulated all the way to the end of the document.
+                parser.actuate(charsheet)
+            return None
+
     def parse(self, parsers, charsheet):
         for parser in parsers:
-            accum = False
-            end_accum = False
-            for idx, frag in enumerate(self.frags):
-                if accum:
-                    # We have already matched and are accumulating
-                    end_accum = parser.accumulate(idx, frag)
-                    if end_accum:
-                        parser.actuate(charsheet)
-                        break
-                    else:
-                        frag.register_match(parser.name)
+            start = 0
+            matched = False
+            while start is not None and start < len(self.frags):
+                # print(f"Starting at: {start} - {self.frags[start]}")
+                end = self.single_pass(parser, charsheet, start)
+                # print(f"end = {end}")
+                if end is not None:
+                    matched = True
+                    start = end + 1
                 else:
-                    # Not accumulating (yet or at all)
-                    match = parser.match(idx, frag)
-                    if match:
-                        frag.register_match(parser.name)
-                        if parser.accumulater:
-                            accum = True
-                            continue
-                        parser.actuate(charsheet)
-                        if parser.bam:
-                            remainder = parser.split(frag)
-                            if remainder:
-                                self.frags = (
-                                    self.frags[0 : idx + 1]
-                                    + [remainder]
-                                    + self.frags[idx + 1 :]
-                                )
-
-                        break
-            else:
-                if accum:
-                    # We accumulated all the way to the end of the document.
-                    parser.actuate(charsheet)
-                else:
-                    print(f"Warning: No text matched parser {parser.name}")
+                    start = None
+            if not matched:
+                print(f"Warning: No text matched parser {parser.name}")

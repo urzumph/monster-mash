@@ -10,12 +10,9 @@ class TestEtumParser(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
 
-    # tests = ["etum_minotaurchief", "etum_psihulk"]
-    tests = ["etum_psihulk"]
+    tests = ["etum_minotaurchief", "etum_psihulk"]
 
-    # TODO: ng parser still missing a bunch of parsing options
-    @unittest.expectedFailure
-    def test_ng_parser(self):
+    def test_parser(self):
         for t in self.tests:
             text = pathlib.Path("tests/" + t + ".txt").read_text()
             tarr = text.split("\n")

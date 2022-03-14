@@ -6,6 +6,7 @@ from . import parser
 class TestParser(unittest.TestCase):
     def setUp(self):
         self.call_count = {}
+        self.maxDiff = None
 
     def add_call(self, func):
         if func in self.call_count:
@@ -103,6 +104,59 @@ class TestParser(unittest.TestCase):
             ],
         )
         self.assertEqual(self.call_count.get("expect_numbers", 0), 1)
+
+    def test_parser_accum_multi_match(self):
+        doc = parser.Document(["012", "345", "678", "a", "012", "345", "678", "b"])
+        matcher = re.compile("^\d")
+        end_matcher = re.compile("^[a-z]")
+        pobj = parser.Parser(
+            "test",
+            self.expect_numbers,
+            regex=matcher,
+            accumulate=True,
+            accum_end_regex=end_matcher,
+        )
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "012", "matched": True, "matcher": "test"},
+                {"string": "345", "matched": True, "matcher": "test"},
+                {"string": "678", "matched": True, "matcher": "test"},
+                {"string": "a", "matched": False, "matcher": None},
+                {"string": "012", "matched": True, "matcher": "test"},
+                {"string": "345", "matched": True, "matcher": "test"},
+                {"string": "678", "matched": True, "matcher": "test"},
+                {"string": "b", "matched": False, "matcher": None},
+            ],
+        )
+        self.assertEqual(self.call_count.get("expect_numbers", 0), 2)
+
+    def test_parser_accum_multi_match_no_end(self):
+        doc = parser.Document(["012", "345", "678", "a", "012", "345", "678"])
+        matcher = re.compile("^\d")
+        end_matcher = re.compile("^[a-z]")
+        pobj = parser.Parser(
+            "test",
+            self.expect_numbers,
+            regex=matcher,
+            accumulate=True,
+            accum_end_regex=end_matcher,
+        )
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "012", "matched": True, "matcher": "test"},
+                {"string": "345", "matched": True, "matcher": "test"},
+                {"string": "678", "matched": True, "matcher": "test"},
+                {"string": "a", "matched": False, "matcher": None},
+                {"string": "012", "matched": True, "matcher": "test"},
+                {"string": "345", "matched": True, "matcher": "test"},
+                {"string": "678", "matched": True, "matcher": "test"},
+            ],
+        )
+        self.assertEqual(self.call_count.get("expect_numbers", 0), 2)
 
     def test_document(self):
         pobj = parser.Parser("test parser", self.expect_a, index=0)

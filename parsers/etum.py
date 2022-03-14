@@ -15,15 +15,26 @@ lang_re = re.compile("^Languages ")
 skills_re = re.compile("^\s*Skills (.*)")
 # Listen +11, Spot +11
 skill_split_re = re.compile("^\s*(\w+) ([+\-]\d+)[,;]?\s*")
+# Melee mwk greataxe +11/+6 (3d6+7/×3) and
+# gore +5 (1d8+3)
+# Space 10 ft.; Reach 10 ft.
+attack_re = re.compile("^\s*Melee ")
+# Space 10 ft.; Reach 10 ft.
+space_re = re.compile("^\s*Space ([\d]+) ft.; Reach ([\d]+)")
+# Feats Great Fortitude, Power Attack, Track
+feats_re = re.compile("^\s*Feats ")
+# Confusing Gaze (Su) Confusion as the spell, 30 feet, caster
+# level 12th, Will DC 16 negates.
+special_re = re.compile("^(.+?) \((Su|Ex)\) ")
 
 # Used in multiple places, so adding to the start
 def inner_skills(charsheet, text, **kwargs):
-    print(f"inner_skills@start:{text}")
+    # print(f"inner_skills@start:{text}")
     rxi = utils.RegexIter(text, skill_split_re)
     for m in iter(rxi):
-        print(f"inner_skills@for:{m.group(1)}")
+        # print(f"inner_skills@for:{m.group(1)}")
         charsheet["skills"][m.group(1)] = m.group(2)
-    print("Left over from inner_skills: ", rxi.remainder)
+    # print("Left over from inner_skills: ", rxi.remainder)
 
 
 # Ster Longhorn, Minotaur Chief
@@ -92,8 +103,10 @@ def saves(charsheet, rematch, **kwargs):
     charsheet["saves"]["will"] = rematch.group(3)
 
 
-# Space 10 ft.; Reach 10 ft.
-space_re = re.compile("^\s*Space ([\d]+) ft.; Reach ([\d]+)")
+def attack(charsheet, text, **kwargs):
+    text = utils.prechomp_regex(text, attack_re)
+    charsheet["attack"] = text
+    charsheet["fullAttack"] = text
 
 
 def space(charsheet, rematch, **kwargs):
@@ -125,6 +138,11 @@ def abilities(charsheet, rematch, **kwargs):
     charsheet["abilities"]["cha"] = int(rematch.group(6))
 
 
+def feats(charsheet, text, **kwargs):
+    text = utils.prechomp_regex(text, feats_re)
+    charsheet["feats"] = text
+
+
 def skills(charsheet, rematch, **kwargs):
     inner_skills(charsheet, rematch.group(1))
 
@@ -136,6 +154,14 @@ squares_re = re.compile("\s*\(\d+ squares\)")
 
 def speed(charsheet, rematch, **kwargs):
     charsheet["speed"] = squares_re.sub("", rematch.group(1))
+
+
+def special(charsheet, text, rematch, **kwargs):
+    move = {"name": rematch.group(1), "type": rematch.group(2)}
+    desc = utils.prechomp_regex(text, special_re)
+    desc = desc.rstrip()
+    move["desc"] = desc
+    charsheet["moves"].append(move)
 
 
 parsers = [
@@ -153,9 +179,30 @@ parsers = [
     ),
     parser.Parser("etum_ac", ac, regex=ac_re),
     parser.Parser("etum_saves", saves, regex=saves_re),
+    parser.Parser(
+        "etum_attack",
+        attack,
+        regex=attack_re,
+        accumulate=True,
+        accum_end_regex=space_re,
+    ),
     parser.Parser("etum_space", space, regex=space_re),
     parser.Parser("etum_bab", bab, regex=bab_re),
     parser.Parser("etum_abilities", abilities, regex=abilities_re),
+    parser.Parser(
+        "etum_feats",
+        feats,
+        regex=feats_re,
+        accumulate=True,
+        accum_end_regex=skills_re,
+    ),
     parser.Parser("etum_skills", skills, regex=skills_re),
     parser.Parser("etum_speed", speed, regex=speed_re),
+    parser.Parser(
+        "etum_special",
+        special,
+        regex=special_re,
+        accumulate=True,
+        accum_end_regex=special_re,
+    ),
 ]
