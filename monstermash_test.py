@@ -9,24 +9,6 @@ class TestMonsterMash(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
 
-    def test_accum_until(self):
-        test = ["ONE", "PURPLE", "TWO\n", "THREE"]
-        until = re.compile("^T")
-        untilNever = re.compile("^Z")
-        resultZero = monstermash.accum_until(0, until, test)
-        self.assertEqual(resultZero, "ONE PURPLE")
-        resultOne = monstermash.accum_until(1, until, test)
-        self.assertEqual(resultOne, "PURPLE")
-        resultTwo = monstermash.accum_until(2, untilNever, test)
-        self.assertEqual(resultTwo, "TWO THREE")
-
-    def test_prechomp_regex(self):
-        test = "ONETWOTHREE"
-        regex = re.compile("^ONE")
-        resstring, resmatch = monstermash.prechomp_regex(test, regex)
-        self.assertEqual(resstring, "TWOTHREE")
-        self.assertEqual(resmatch.group(0), "ONE")
-
     tests = ["etum_minotaurchief", "etum_psihulk"]
 
     def test_parse(self):
