@@ -6,10 +6,10 @@ CE Large aberration
 Init +1; Senses darkvision 60 ft., tremorsense 60 ft., Listen
 +13, Spot +2
 Languages Terran
-AC 22, touch 10, flat-footed 21
+AC 22, touch 10, fl at-footed 21
 Fort +11, Ref +4, Will +9
 Speed 20 ft. (4 squares), burrow 20 ft.
-Melee 2 claws +14 each (2d4+6) and
+Ranged 2 claws +14 each (2d4+6) and
 bite +12 (2d8+3)
 Space 10 ft.; Reach 10 ft.
 Base Atk +9; Grp +19
@@ -18,7 +18,7 @@ Power Points/Day: 9 (6 used); Powers Known (ML 4th):
 2nd—psionic lion’s charge
 1st—biofeedback, inertial armor, vigor (all already used
 and figured into the monster’s statistics)
-Abilities Str 23, Dex 13, Con 17, Int 11, Wis 15, Cha 15
+Abilities Str 23, Dex 13, Con 17, Int —, Wis -, Cha 15
 Feats Great Fortitude, Greater Psionic Fist, Multiattack,
 Psionic Fist, Psionic Meditation, Skill Focus
 (Concentration), Toughness

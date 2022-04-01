@@ -58,6 +58,8 @@ def set_in_roll20(name, details, index):
 
 
 def calc_ability_mod(val):
+    if not isinstance(val, int):
+        return "-"
     return math.floor((val - 10) / 2)
 
 
@@ -75,6 +77,8 @@ def send_to_browser(details):
     set_val("attr_npcarmorclass", str(details["ac"]["base"]))
     set_val("attr_npctoucharmorclass", str(details["ac"]["touch"]))
     set_val("attr_npcflatfootarmorclass", str(details["ac"]["flat"]))
+    # Special Qualities
+    set_in_roll20("attr_npcspecialqualities", details, "sq")
     # Saves
     # TODO - alter set_in_roll20 to permit an array of indexes and KeyError check the whole set
     set_in_roll20("attr_npcfortsave", details["saves"], "fort")
@@ -114,6 +118,13 @@ def send_to_browser(details):
     for k, v in details["skills"].items():
         skills += k + ": " + v + "; "
     set_val("attr_npcskills", skills)
+
+    combatdesc = ""
+    for m in details["moves"]:
+        combatdesc += f'{m["name"]} ({m["type"]})\n'
+        combatdesc += "-" * 10 + "\n"
+        combatdesc += m["desc"] + "\n\n"
+    set_val("attr_npccombatdescr", combatdesc)
 
 
 # TODO "size": "Large",

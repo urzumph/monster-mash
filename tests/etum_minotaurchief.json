@@ -25,8 +25,8 @@
     },
 "attack": "mwk greataxe +11/+6 (3d6+7/×3) and gore +5 (1d8+3)",
 "fullAttack": "mwk greataxe +11/+6 (3d6+7/×3) and gore +5 (1d8+3)",
-"space": 10,
-"reach": 10,
+"space": "10",
+"reach": "10",
 "bab": 6,
 "grapple": 15,
 "abilities": {

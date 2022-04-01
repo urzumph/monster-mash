@@ -38,3 +38,11 @@ class TestUtils(unittest.TestCase):
         left, right = utils.split_from(s, r)
         self.assertEqual(left, s)
         self.assertEqual(right, None)
+
+    def test_maybe_int(self):
+        s = "-"
+        r = utils.maybe_int(s)
+        self.assertEqual(s, r)
+        s = "10"
+        r = utils.maybe_int(s)
+        self.assertEqual(r, 10)

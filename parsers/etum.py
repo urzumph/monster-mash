@@ -3,6 +3,7 @@ from . import parser
 from . import utils
 
 # Regular expression definitions
+NUMBER_OR_DASH = "[–—\-\d]"
 
 # Init +0; Senses darkvision 60 ft., scent; Listen +11, Spot
 # +11
@@ -10,6 +11,7 @@ from . import utils
 init_re = re.compile("^\s*Init ([+\-\–]\d+);")
 senses_re = re.compile("^\s*Senses ")
 senses_end_re = re.compile("(;|Listen|Spot)")
+senses_accum_end_re = re.compile("^(Languages|AC)")
 lang_re = re.compile("^Languages ")
 # Skills Intimidate +3, Listen +11, Search +4, Spot +11
 skills_re = re.compile("^\s*Skills (.*)")
@@ -18,14 +20,16 @@ skill_split_re = re.compile("^\s*(\w+) ([+\-]\d+)[,;]?\s*")
 # Melee mwk greataxe +11/+6 (3d6+7/×3) and
 # gore +5 (1d8+3)
 # Space 10 ft.; Reach 10 ft.
-attack_re = re.compile("^\s*Melee ")
+attack_re = re.compile("^\s*(Melee |Ranged )")
 # Space 10 ft.; Reach 10 ft.
-space_re = re.compile("^\s*Space ([\d]+) ft.; Reach ([\d]+)")
+space_re = re.compile("^\s*Space ([\d\-\/]+) ft.; Reach ([\d]+)")
 # Feats Great Fortitude, Power Attack, Track
 feats_re = re.compile("^\s*Feats ")
 # Confusing Gaze (Su) Confusion as the spell, 30 feet, caster
 # level 12th, Will DC 16 negates.
 special_re = re.compile("^(.+?) \((Su|Ex)\) ")
+# Base Atk +6; Grp +15
+bab_re = re.compile(f"^\s*Base Atk [+]?([\-\d]+); Grp [+]?({NUMBER_OR_DASH}+)")
 
 # Used in multiple places, so adding to the start
 def inner_skills(charsheet, text, **kwargs):
@@ -82,7 +86,7 @@ def senses(charsheet, text, **kwargs):
 
 
 # AC 19, touch 13, flat-footed —; natural cunning
-ac_re = re.compile("^\s*AC ([\d\—]+), touch ([\d\—]+), flat-footed ([\d\—]+)")
+ac_re = re.compile("^\s*AC ([\d\—]+), touch ([\d\—]+), fl\s*at-footed ([\d\—]+)")
 
 
 def ac(charsheet, rematch, **kwargs):
@@ -110,32 +114,28 @@ def attack(charsheet, text, **kwargs):
 
 
 def space(charsheet, rematch, **kwargs):
-    charsheet["space"] = int(rematch.group(1))
-    charsheet["reach"] = int(rematch.group(2))
-
-
-# Base Atk +6; Grp +15
-bab_re = re.compile("^\s*Base Atk [+]?([\-\d]+); Grp [+]?([\-\d]+)")
+    charsheet["space"] = rematch.group(1)
+    charsheet["reach"] = rematch.group(2)
 
 
 def bab(charsheet, rematch, **kwargs):
-    charsheet["bab"] = int(rematch.group(1))
-    charsheet["grapple"] = int(rematch.group(2))
+    charsheet["bab"] = utils.maybe_int(rematch.group(1))
+    charsheet["grapple"] = utils.maybe_int(rematch.group(2))
 
 
 # Abilities Str 21, Dex 10, Con 15, Int 10, Wis 10, Cha 8
 abilities_re = re.compile(
-    "^\s*Abilities Str (\d+), Dex (\d+), Con (\d+), Int (\d+), Wis (\d+), Cha (\d+)"
+    f"^\s*Abilities Str ({NUMBER_OR_DASH}+), Dex ({NUMBER_OR_DASH}+), Con ({NUMBER_OR_DASH}+), Int ({NUMBER_OR_DASH}+), Wis ({NUMBER_OR_DASH}+), Cha ({NUMBER_OR_DASH}+)"
 )
 
 
 def abilities(charsheet, rematch, **kwargs):
-    charsheet["abilities"]["str"] = int(rematch.group(1))
-    charsheet["abilities"]["dex"] = int(rematch.group(2))
-    charsheet["abilities"]["con"] = int(rematch.group(3))
-    charsheet["abilities"]["int"] = int(rematch.group(4))
-    charsheet["abilities"]["wis"] = int(rematch.group(5))
-    charsheet["abilities"]["cha"] = int(rematch.group(6))
+    charsheet["abilities"]["str"] = utils.maybe_int(rematch.group(1))
+    charsheet["abilities"]["dex"] = utils.maybe_int(rematch.group(2))
+    charsheet["abilities"]["con"] = utils.maybe_int(rematch.group(3))
+    charsheet["abilities"]["int"] = utils.maybe_int(rematch.group(4))
+    charsheet["abilities"]["wis"] = utils.maybe_int(rematch.group(5))
+    charsheet["abilities"]["cha"] = utils.maybe_int(rematch.group(6))
 
 
 def feats(charsheet, text, **kwargs):
@@ -175,7 +175,7 @@ parsers = [
         senses,
         regex=senses_re,
         accumulate=True,
-        accum_end_regex=lang_re,
+        accum_end_regex=senses_accum_end_re,
     ),
     parser.Parser("etum_ac", ac, regex=ac_re),
     parser.Parser("etum_saves", saves, regex=saves_re),

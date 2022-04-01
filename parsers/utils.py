@@ -29,3 +29,12 @@ def split_from(string, regex):
         return string[0 : m.start()], string[m.start() :]
     else:
         return string, None
+
+
+def maybe_int(text):
+    toret = text
+    try:
+        toret = int(text)
+    except ValueError:
+        pass
+    return toret
