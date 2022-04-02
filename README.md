@@ -16,12 +16,3 @@ python -m unittest parsers.parser_test.TestParser.test_parser_bam
 ## Usage
 
 Run chromium with `chromium --remote-debugging-port=9222 --user-data-dir=remote-profile‘
-
-## TODO
-elemental traits
-immunities
-SR, turn resistence
--> Turn JSON blob into a class
-   -> Class should do read verification & type checking
-   -> Automatically strip bad chars (eg, leading spaces, newlines in single line fields...)
-   -> Check chars on pseudo-number fields (2-1/2) and nullable fields (-)

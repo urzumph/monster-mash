@@ -1,3 +1,11 @@
+elemental traits
+immunities
+SR, turn resistence
+-> Turn JSON blob into a class
+   -> Class should do read verification & type checking
+   -> Automatically strip bad chars (eg, leading spaces, newlines in single line fields...)
+   -> Check chars on pseudo-number fields (2-1/2) and nullable fields (-)
+
 Types to test import
 https://www.d20srd.org/srd/monsters/direLion.htm
 City of the Spider Queen
