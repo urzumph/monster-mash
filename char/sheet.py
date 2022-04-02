@@ -9,8 +9,19 @@ def is_string(val):
         return f"'{val}' is a {type(val)} - expected a string"
 
 
+def is_integer(val):
+    if isinstance(val, int):
+        return None
+    else:
+        try:
+            parsed = int(val)
+        except:
+            return f"'{val}' failed to parse as an integer"
+    return None
+
+
 def is_nullable_number(val):
-    permitted = "0123456789-—"
+    permitted = "+0123456789-—"
     if isinstance(val, int):
         return None
     if not isinstance(val, str):
@@ -19,6 +30,38 @@ def is_nullable_number(val):
         if not c in permitted:
             return f"'{val}' contains character '{c}' which is not permitted for a nullable number"
     return None
+
+
+def valid_alignment(val):
+    if not isinstance(val, str):
+        return f"'{val}' is a {type(val)} - expected a str"
+    if val == "N":
+        return None
+    elif len(val) == 2:
+        if val[0] in "CNL" and val[1] in "GNE":
+            return None
+    else:
+        return f"{val} is not a valid alignment"
+
+
+VALID_SIZES = [
+    "Fine",
+    "Diminutive",
+    "Tiny",
+    "Small",
+    "Medium",
+    "Large",
+    "Huge",
+    "Gargantuan",
+    "Colossal",
+]
+
+
+def valid_size(val):
+    if val in VALID_SIZES:
+        return None
+    else:
+        return f"{val} is not a valid size"
 
 
 def stringify(val):
@@ -84,6 +127,24 @@ class SubSheet:
 
 
 NULLABLE_NUMBER = DataType(stringify, is_nullable_number)
+INTEGER = DataType(None, is_integer)
+SUBSHEET = DataType(None, is_subsheet)
+ARBITRARY_STRING = DataType(strip_whitespace, is_string)
+
+ABILITIES_DATATYPES = {
+    "str": NULLABLE_NUMBER,
+    "dex": NULLABLE_NUMBER,
+    "con": NULLABLE_NUMBER,
+    "int": NULLABLE_NUMBER,
+    "wis": NULLABLE_NUMBER,
+    "cha": NULLABLE_NUMBER,
+}
+
+SAVES_DATATYPES = {
+    "fort": INTEGER,
+    "ref": INTEGER,
+    "will": INTEGER,
+}
 
 ARMOR_DATATYPES = {
     "base": NULLABLE_NUMBER,
@@ -93,9 +154,27 @@ ARMOR_DATATYPES = {
 
 CHARACTER_DATATYPES = {
     # TODO: Maybe include the roll20 field name so we can enumerate over them
-    "name": DataType(strip_whitespace, is_string),
-    "ac": DataType(None, is_subsheet),
-    "skills": DataType(None, is_subsheet),
+    "name": ARBITRARY_STRING,
+    "hp": INTEGER,
+    "hd": INTEGER,
+    "alignment": DataType(strip_whitespace, valid_alignment),
+    # TODO: Maybe want to Capital Case this as well
+    "size": DataType(strip_whitespace, valid_size),
+    "type": ARBITRARY_STRING,
+    "init": INTEGER,
+    "senses": ARBITRARY_STRING,
+    "attack": ARBITRARY_STRING,
+    "fullAttack": ARBITRARY_STRING,
+    "space": INTEGER,
+    "reach": INTEGER,
+    "bab": INTEGER,
+    "grapple": INTEGER,
+    "feats": ARBITRARY_STRING,
+    "speed": ARBITRARY_STRING,  # Possibly multiple types of string
+    "ac": SUBSHEET,
+    "skills": SUBSHEET,
+    "saves": SUBSHEET,
+    "abilities": SUBSHEET,
 }
 
 
@@ -104,3 +183,5 @@ class Sheet(SubSheet):
         super().__init__(CHARACTER_DATATYPES)
         self["ac"] = SubSheet(ARMOR_DATATYPES)
         self["skills"] = SubSheet({"*": NULLABLE_NUMBER})
+        self["saves"] = SubSheet(SAVES_DATATYPES)
+        self["abilities"] = SubSheet(ABILITIES_DATATYPES)

@@ -2,6 +2,7 @@ import unittest
 import pathlib
 import json
 import re
+import parsers
 from . import sheet
 
 
@@ -33,6 +34,20 @@ class TestSheet(unittest.TestCase):
         s = sheet.Sheet()
         with self.assertRaises(KeyError):
             test = s["invalid"]
+
+    # Temporary test to verify all needed attributes etc
+    @unittest.expectedFailure
+    def test_parse(self):
+        t = "etum_minotaurchief"
+        text = pathlib.Path("tests/" + t + ".txt").read_text()
+        tarr = text.split("\n")
+        jt = pathlib.Path("tests/" + t + ".json").read_text()
+        jres = json.loads(jt)
+
+        result = sheet.Sheet()
+        doc = parsers.Document(tarr)
+        doc.parse(parsers.etum_mode, result)
+        self.assertDictEqual(result, jres)
 
 
 if __name__ == "__main__":
