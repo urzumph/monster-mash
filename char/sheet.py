@@ -151,6 +151,9 @@ class SubSheet:
         else:
             return self._values == other._values
 
+    def __str__(self):
+        return str(self._values)
+
     def append():
         result = self._check_assignment(key, value)
         if not isinstance(self._values[key], list):

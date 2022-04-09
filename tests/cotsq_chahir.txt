@@ -1,0 +1,27 @@
+Chahir: Male human vampire Sor8; CR 10; Medium-size undead; HD
+8d12+3; hp 66; Init +8; Spd 30 ft.; AC 23, touch 15, flat-footed 19;
+Atk +6 melee (1d6+3, slam); SA vampire attacks (see Vampires side-
+bar, page 134); SQ DR 15/+1, turn resistance +4, vampire traits (see
+Vampires sidebar, page 134); AL CE; SV Fort +3, Ref +9, Will +11;
+Str 14, Dex 18, Con —, Int 10, Wis 14, Cha 22.
+Skills and Feats: Bluff +14, Concentration +17, Hide +12, Knowledge
+(arcana) +11, Listen +12, Move Silently +12, Search +8, Sense Motive
++10, Spellcraft +11, Spot +12; Alertness, Combat Casting, Combat Re-
+flexes, Dodge, Improved Initiative, Iron Will, Lightning Reflexes,
+Mobility, Toughness.
+Sorcerer Spells Known (6/8/8/6/4; save DC 16 + spell level): 0—
+arcane mark, daze, detect magic, mage hand, open/close, ray of frost,
+read magic, resistance; 1st—mage armor, magic missile, ray of enfee-
+blement, sleep, true strike; 2nd—darkness, Melf’s acid arrow, mirror
+image; 3rd—haste, lightning bolt; 4th—improved invisibility.
+Possessions: Bracers of armor +2, ring of protection +1, wand of
+magic missiles (3rd-level caster), cloak of resistance +1, 150 gp.
+Vampire Attacks: The Will save DCs for Chahir’s dominate and
+energy drain abilities are both 20.
+Turn Resistance (Ex): When resolving a turn, rebuke, command,
+or bolster attempt, Chahir is treated as a 12-HD creature.
+Chahir’s Power-Up Suite: Chahir prepares for battle by casting
+mage armor. His increased AC is not included in the statistics above,
+but it is reflected in the powered-up statistics below.
+Powered-Up Statistics: AC 25, touch 15, flat-footed 21 (mage
+armor).

@@ -1,0 +1,15 @@
+Maurezhi: CR 11; Medium-size outsider (chaotic, evil); HD 10d8+10;
+hp 59; Init +2; Spd 40 ft.; AC 20, touch 12, flat-footed 18 (blur gives
+20% miss chance); Atk +14 melee (1d6+4 plus paralysis, bite) and +12
+melee (1d4+3 plus paralysis, 2 claws); SA consume*, paralysis* (DC
+16), pounce*, spell-like abilities*, summon creatures*; SQ assume
+shape* (male human rogue, male drow fighter, female human barbar-
+ian, male gnoll ranger, female drow cleric of Lolth), DR 20/+2*, out-
+sider traits*, SR 21, tanar’ri traits*; AL CE; SV Fort +8, Ref +9, Will
++8; Str 19, Dex 15, Con 12, Int 14, Wis 12, Cha 17.
+Skills and Feats: Appraise +3, Climb +10, Concentration +5, Dis-
+able Device +3, Disguise +10 (+22 in assumed shape), Hide +12, Intuit
+Direction +3, Jump +16, Listen +15, Move Silently +12, Open Lock
++3, Search +3, Spellcraft +5, Spot +13, Tumble +5, Wilderness Lore
++3; Alertness, Dodge, Multiattack.
+*Maurezhi ability; see Demon, Maurezhi in Appendix 1.

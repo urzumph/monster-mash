@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# TODO: Proper logging to avoid print statements
+import logging
 
 
 class Fragment:
@@ -49,10 +49,13 @@ class Parser:
 
     def match(self, idx, frag):
         self.text = ""
+        # Multiple matches may be required.
+        # Match logic is ANY OF
+        to_ret = False
         if self._index is not None:
             if idx == self._index:
                 self.text = frag.string
-                return True
+                to_ret = True
         if self._regex is not None:
             m = self._regex.search(frag.string)
             if m:
@@ -63,8 +66,8 @@ class Parser:
                     self.text = frag.string
                 else:
                     self.text = m.group(0)
-                return True
-        return False
+                to_ret = True
+        return to_ret
 
     def actuate(self, charsheet):
         self._actuator(charsheet, text=self.text, rematch=self._rematch)
@@ -74,10 +77,20 @@ class Parser:
         modify the fragment to include only the matched text
         from the match() and return a new fragment containing
         all of the remaining text."""
+        if not self._rematch:
+            logging.debug(
+                "%s failed to split non-regex matched fragment %s", self, frag
+            )
+            return False
         end = self._rematch.end()
         if end < len(frag.string):
-            newfrag = Fragment(frag.string[end:])
-            frag.string = frag.string[0:end]
+            pre = frag.string[end:]
+            post = frag.string[0:end]
+            logging.debug(
+                "%s splitting fragment %s to %s & %s", self, frag.string, pre, post
+            )
+            newfrag = Fragment(pre)
+            frag.string = post
             return newfrag
         else:
             return False
@@ -94,6 +107,12 @@ class Parser:
                 self.text += " "
             self.text += frag.string
         return False
+
+    def __str__(self):
+        return f"Parser({self.name})"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Document:
@@ -115,6 +134,11 @@ class Document:
         return s
 
     def single_pass(self, parser, charsheet, offset):
+        logging.debug(
+            "Document.single_pass starting on parser %s with offset %d",
+            parser.name,
+            offset,
+        )
         accum = False
         end_accum = False
         for idx, frag in enumerate(self.frags[offset:], offset):
@@ -133,6 +157,12 @@ class Document:
                 # Not accumulating (yet or at all)
                 match = parser.match(idx, frag)
                 if match:
+                    logging.debug(
+                        "Document.single_pass %s match at idx %d / frag %s",
+                        parser,
+                        idx,
+                        frag.string,
+                    )
                     frag.register_match(parser.name)
                     if parser.accumulater:
                         accum = True
@@ -156,7 +186,9 @@ class Document:
             return None
 
     def parse(self, parsers, charsheet):
+        logging.debug("Document.parse started with parsers: %s", parsers)
         for parser in parsers:
+            logging.debug("Document.parse starting parser: %s", parser.name)
             start = 0
             matched = False
             while start is not None and start < len(self.frags):

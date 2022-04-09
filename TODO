@@ -1,4 +1,5 @@
-Logging Framework
+Logging Framework improvements
+Better __str__ for Sheet() for test comparisons
 
 ## etum known issues:
 elemental traits

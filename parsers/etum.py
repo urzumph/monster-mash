@@ -1,9 +1,7 @@
 import re
 from . import parser
 from . import utils
-
-# Regular expression definitions
-NUMBER_OR_DASH = "[–—\-\d]"
+from . import shared
 
 # Init +0; Senses darkvision 60 ft., scent; Listen +11, Spot
 # +11
@@ -29,7 +27,7 @@ feats_re = re.compile("^\s*Feats ")
 # level 12th, Will DC 16 negates.
 special_re = re.compile("^(.+?) \((Su|Ex)\) ")
 # Base Atk +6; Grp +15
-bab_re = re.compile(f"^\s*Base Atk [+]?([\-\d]+); Grp [+]?({NUMBER_OR_DASH}+)")
+bab_re = re.compile(f"^\s*Base Atk [+]?([\-\d]+); Grp [+]?({shared.NUMBER_OR_DASH}+)")
 
 # Used in multiple places, so adding to the start
 def inner_skills(charsheet, text, **kwargs):
@@ -125,7 +123,7 @@ def bab(charsheet, rematch, **kwargs):
 
 # Abilities Str 21, Dex 10, Con 15, Int 10, Wis 10, Cha 8
 abilities_re = re.compile(
-    f"^\s*Abilities Str ({NUMBER_OR_DASH}+), Dex ({NUMBER_OR_DASH}+), Con ({NUMBER_OR_DASH}+), Int ({NUMBER_OR_DASH}+), Wis ({NUMBER_OR_DASH}+), Cha ({NUMBER_OR_DASH}+)"
+    f"^\s*Abilities Str ({shared.NUMBER_OR_DASH}+), Dex ({shared.NUMBER_OR_DASH}+), Con ({shared.NUMBER_OR_DASH}+), Int ({shared.NUMBER_OR_DASH}+), Wis ({shared.NUMBER_OR_DASH}+), Cha ({shared.NUMBER_OR_DASH}+)"
 )
 
 
