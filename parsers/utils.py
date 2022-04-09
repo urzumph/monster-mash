@@ -28,7 +28,7 @@ def split_from(string, regex):
     if m:
         return string[0 : m.start()], string[m.start() :]
     else:
-        return string, None
+        return string, ""
 
 
 def maybe_int(text):

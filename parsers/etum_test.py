@@ -4,6 +4,7 @@ from . import etum
 import pathlib
 import json
 import re
+import char
 
 
 class TestEtumParser(unittest.TestCase):
@@ -18,16 +19,11 @@ class TestEtumParser(unittest.TestCase):
             tarr = text.split("\n")
             doc = parser.Document(tarr)
             jt = pathlib.Path("tests/" + t + ".json").read_text()
-            jres = json.loads(jt)
-            # TODO: Fix when I implement character sheets properly
-            result = dict()
-            result["skills"] = dict()
-            result["ac"] = dict()
-            result["saves"] = dict()
-            result["abilities"] = dict()
-            result["moves"] = []
+            jres = char.Sheet()
+            jres.from_json(jt)
+            result = char.Sheet()
             doc.parse(etum.parsers, result)
-            self.assertDictEqual(result, jres, f"Parser results:\n{doc}")
+            self.assertEqual(result, jres, f"Parser results:\n{doc}")
 
 
 if __name__ == "__main__":

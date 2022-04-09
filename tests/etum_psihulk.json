@@ -40,15 +40,16 @@
     },
 "feats": "Great Fortitude, Greater Psionic Fist, Multiattack, Psionic Fist, Psionic Meditation, Skill Focus (Concentration), Toughness",
 "sq": "DR 2/—",
-"moves": [
-    {
+"moves": {
+    "Confusing Gaze":{
         "name": "Confusing Gaze",
         "type": "Su",
         "desc": "Confusion as the spell, 30 feet, caster level 12th, Will DC 16 negates."
-    },{
+    },
+    "Psionic Lion’s Charge":{
         "name": "Psionic Lion’s Charge",
         "type": "Su",
         "desc": "The psi-hulk spends its 3 remaining power points to activate this ability. When the ability is activated, the creature gains the powerful charge of a lion. When it charges, it can make a full attack in the same round."
-    }],
+    }},
 "speed": "20 ft., burrow 20 ft."
 }

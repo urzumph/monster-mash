@@ -157,11 +157,12 @@ def speed(charsheet, rematch, **kwargs):
 
 
 def special(charsheet, text, rematch, **kwargs):
-    move = {"name": rematch.group(1), "type": rematch.group(2)}
+    mname = rematch.group(1)
+    move = {"name": mname, "type": rematch.group(2)}
     desc = utils.prechomp_regex(text, special_re)
     desc = desc.rstrip()
     move["desc"] = desc
-    charsheet["moves"].append(move)
+    charsheet["moves"][mname] = move
 
 
 parsers = [

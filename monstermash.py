@@ -3,18 +3,14 @@ import sys
 import re
 import math
 import parsers
+import char
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 
 def parse(intext):
-    result = dict()
-    result["skills"] = dict()
-    result["ac"] = dict()
-    result["saves"] = dict()
-    result["abilities"] = dict()
-    result["moves"] = []
+    result = char.Sheet()
     doc = parsers.Document(intext)
     doc.parse(parsers.etum_mode, result)
     return result

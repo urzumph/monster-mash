@@ -1,3 +1,6 @@
+import json
+
+
 def strip_whitespace(val):
     return val.strip()
 
@@ -75,6 +78,26 @@ def is_subsheet(val):
         return f"'{val}' is a {type(val)} - expected a SubSheet"
 
 
+def is_type(val):
+    if not isinstance(val, dict):
+        return f"Tried to set unexpected type: {type(val)} to a move"
+    if "type" in val:
+        if val["type"] not in ["Su", "Ex"]:
+            return f"Unexpected move type: {val['type']}"
+    else:
+        return "Move is missing a type"
+
+    if "desc" not in val:
+        return "Move is missing a description"
+    elif not isinstance(val["desc"], str):
+        return f"Unexpected type of description: {type(val['desc'])}"
+
+    if "name" not in val:
+        return "Move is missing a name"
+    elif not isinstance(val["name"], str):
+        return f"Unexpected type of name: {type(val['name'])}"
+
+
 class DataType:
     def __init__(self, retoucher, validator):
         self._retoucher = retoucher
@@ -119,6 +142,15 @@ class SubSheet:
         result = self._check_assignment(key, value)
         self._values[key] = result
 
+    def __contains__(self, item):
+        return item in self._values
+
+    def __eq__(self, other):
+        if not isinstance(other, SubSheet):
+            return False
+        else:
+            return self._values == other._values
+
     def append():
         result = self._check_assignment(key, value)
         if not isinstance(self._values[key], list):
@@ -152,6 +184,7 @@ ARMOR_DATATYPES = {
     "flat": NULLABLE_NUMBER,
 }
 
+
 CHARACTER_DATATYPES = {
     # TODO: Maybe include the roll20 field name so we can enumerate over them
     "name": ARBITRARY_STRING,
@@ -175,7 +208,23 @@ CHARACTER_DATATYPES = {
     "skills": SUBSHEET,
     "saves": SUBSHEET,
     "abilities": SUBSHEET,
+    "moves": SUBSHEET,
+    "sq": ARBITRARY_STRING,
 }
+
+
+def load_recursive(target, inval):
+    for k, v in inval.items():
+        if isinstance(v, dict):
+            # target[k] may exist as SubSheet
+            if k in target:
+                load_recursive(target[k], inval[k])
+            else:
+                new_target = dict()
+                load_recursive(new_target, inval[k])
+                target[k] = new_target
+        else:
+            target[k] = v
 
 
 class Sheet(SubSheet):
@@ -185,3 +234,8 @@ class Sheet(SubSheet):
         self["skills"] = SubSheet({"*": NULLABLE_NUMBER})
         self["saves"] = SubSheet(SAVES_DATATYPES)
         self["abilities"] = SubSheet(ABILITIES_DATATYPES)
+        self["moves"] = SubSheet({"*": DataType(None, is_type)})
+
+    def from_json(self, path):
+        jval = json.loads(path)
+        load_recursive(self, jval)

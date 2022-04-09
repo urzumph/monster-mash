@@ -37,7 +37,7 @@ class TestUtils(unittest.TestCase):
         r = re.compile("potato")
         left, right = utils.split_from(s, r)
         self.assertEqual(left, s)
-        self.assertEqual(right, None)
+        self.assertEqual(right, "")
 
     def test_maybe_int(self):
         s = "-"
