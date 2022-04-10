@@ -22,6 +22,10 @@ class TestParser(unittest.TestCase):
         self.add_call("expect_numbers")
         self.assertEqual(text, "012 345 678")
 
+    def expect_dewrap(self, charsheet, text, **kwargs):
+        self.add_call("expect_dewrap")
+        self.assertEqual(text, "012 34")
+
     def test_fragment(self):
         frag = parser.Fragment("a")
         self.assertEqual(frag.matched, False)
@@ -157,6 +161,23 @@ class TestParser(unittest.TestCase):
             ],
         )
         self.assertEqual(self.call_count.get("expect_numbers", 0), 2)
+
+    def test_parser_dewrap(self):
+        doc = parser.Document(["012", "34;a", "bcd"])
+        matcher = re.compile("^[\d\s]{4,}")
+        pobj = parser.Parser(
+            "test", self.expect_dewrap, regex=matcher, line_dewrap=True
+        )
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "012 34", "matched": True, "matcher": "test"},
+                {"string": ";a", "matched": False, "matcher": None},
+                {"string": "bcd", "matched": False, "matcher": None},
+            ],
+        )
+        self.assertEqual(self.call_count.get("expect_dewrap", 0), 1)
 
     def test_document(self):
         pobj = parser.Parser("test parser", self.expect_a, index=0)

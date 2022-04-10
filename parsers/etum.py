@@ -46,7 +46,7 @@ def name(charsheet, text, **kwargs):
 
 # CE Large monstrous humanoid
 mtype_re = re.compile(
-    "\s*((?:[CNL][GNE])|N) (Fine|Diminutive|Tiny|Small|Medium|Large|Huge|Gargantuan|Colossal) (.*)"
+    f"\s*({shared.ALIGNMENT}) (Fine|Diminutive|Tiny|Small|Medium|Large|Huge|Gargantuan|Colossal) (.*)"
 )
 
 
@@ -87,22 +87,10 @@ def senses(charsheet, text, **kwargs):
 ac_re = re.compile("^\s*AC ([\d\—]+), touch ([\d\—]+), fl\s*at-footed ([\d\—]+)")
 
 
-def ac(charsheet, rematch, **kwargs):
-    charsheet["ac"]["base"] = rematch.group(1)
-    charsheet["ac"]["touch"] = rematch.group(2)
-    charsheet["ac"]["flat"] = rematch.group(3)
-
-
 # Fort +6, Ref +5, Will +5
 saves_re = re.compile(
-    "^\s*Fort ([+\-]?[\d\—]+), Ref ([+\-]?[\d\—]+), Will ([+\-]?[\d\—]+)"
+    f"^\s*Fort ({shared.BONUS_OR_DASH}), Ref ({shared.BONUS_OR_DASH}), Will ({shared.BONUS_OR_DASH})"
 )
-
-
-def saves(charsheet, rematch, **kwargs):
-    charsheet["saves"]["fort"] = rematch.group(1)
-    charsheet["saves"]["ref"] = rematch.group(2)
-    charsheet["saves"]["will"] = rematch.group(3)
 
 
 def attack(charsheet, text, **kwargs):
@@ -125,15 +113,6 @@ def bab(charsheet, rematch, **kwargs):
 abilities_re = re.compile(
     f"^\s*Abilities Str ({shared.NUMBER_OR_DASH}+), Dex ({shared.NUMBER_OR_DASH}+), Con ({shared.NUMBER_OR_DASH}+), Int ({shared.NUMBER_OR_DASH}+), Wis ({shared.NUMBER_OR_DASH}+), Cha ({shared.NUMBER_OR_DASH}+)"
 )
-
-
-def abilities(charsheet, rematch, **kwargs):
-    charsheet["abilities"]["str"] = utils.maybe_int(rematch.group(1))
-    charsheet["abilities"]["dex"] = utils.maybe_int(rematch.group(2))
-    charsheet["abilities"]["con"] = utils.maybe_int(rematch.group(3))
-    charsheet["abilities"]["int"] = utils.maybe_int(rematch.group(4))
-    charsheet["abilities"]["wis"] = utils.maybe_int(rematch.group(5))
-    charsheet["abilities"]["cha"] = utils.maybe_int(rematch.group(6))
 
 
 def feats(charsheet, text, **kwargs):
@@ -176,8 +155,8 @@ parsers = [
         accumulate=True,
         accum_end_regex=senses_accum_end_re,
     ),
-    parser.Parser("etum_ac", ac, regex=ac_re),
-    parser.Parser("etum_saves", saves, regex=saves_re),
+    parser.Parser("etum_ac", shared.ac, regex=ac_re),
+    parser.Parser("etum_saves", shared.saves, regex=saves_re),
     parser.Parser(
         "etum_attack",
         attack,
@@ -187,7 +166,7 @@ parsers = [
     ),
     parser.Parser("etum_space", space, regex=space_re),
     parser.Parser("etum_bab", bab, regex=bab_re),
-    parser.Parser("etum_abilities", abilities, regex=abilities_re),
+    parser.Parser("etum_abilities", shared.abilities, regex=abilities_re),
     parser.Parser(
         "etum_feats",
         feats,

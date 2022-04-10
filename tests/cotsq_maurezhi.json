@@ -1,5 +1,28 @@
 {
 "name":"Maurezhi",
 "type": "outsider (chaotic, evil)",
-"size": "Medium"
+"size": "Medium",
+"hd": 10,
+"hp": 59,
+"init": "+2",
+"speed": "40 ft.",
+"ac": {
+    "base": "20",
+    "touch": "12",
+    "flat": "18"
+    },
+"saves": {
+    "fort": "+8",
+    "ref": "+9",
+    "will": "+8"
+    },
+"alignment": "CE",
+"abilities": {
+    "str": 19,
+    "dex": 15,
+    "con": 12,
+    "int": 14,
+    "wis": 12,
+    "cha": 17
+    }
 }

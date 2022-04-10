@@ -1,5 +1,28 @@
 {
 "name":"Chahir",
 "type": "undead",
-"size": "Medium"
+"size": "Medium",
+"hd": 8,
+"hp": 66,
+"init": "+8",
+"speed": "30 ft.",
+"ac": {
+    "base": "23",
+    "touch": "15",
+    "flat": "19"
+    },
+"saves": {
+    "fort": "+3",
+    "ref": "+9",
+    "will": "+11"
+    },
+"alignment": "CE",
+"abilities": {
+    "str": 14,
+    "dex": 18,
+    "con": "—",
+    "int": 10,
+    "wis": 14,
+    "cha": 22
+    }
 }

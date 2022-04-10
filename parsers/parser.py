@@ -32,6 +32,7 @@ class Parser:
         accumulate=False,
         accum_end_regex=None,
         bam=False,
+        line_dewrap=False,
     ):
         self.name = name
         self._actuator = actuator
@@ -40,14 +41,18 @@ class Parser:
         self._rematch = None
         self.accumulater = accumulate
         self._end_regex = accum_end_regex
+        self.line_dewrap = line_dewrap
         if self.accumulater and not self._end_regex:
             raise ValueError("In accumulater mode, an end regex is required")
         # Break after match
         self.bam = bam
         if self.accumulater and self.bam:
             raise ValueError("Cannot use accumulation and break-after-match together")
+        if self.accumulater and self.line_dewrap:
+            raise ValueError("Cannot use accumulation and line-dewrap together")
 
     def match(self, idx, frag):
+        logging.debug("%s.match(idx %d , frag %s)", self, idx, frag.string)
         self.text = ""
         # Multiple matches may be required.
         # Match logic is ANY OF
@@ -69,6 +74,31 @@ class Parser:
                 to_ret = True
         return to_ret
 
+    def dewrap_match(self, idx, frag_one, frag_two):
+        logging.debug(
+            "%s.dewrap_match(idx %d , frag_one %s, frag_two %s)",
+            self,
+            idx,
+            frag_one.string,
+            frag_two.string,
+        )
+        matchable = frag_one.string + " " + frag_two.string
+        self.text = ""
+        if self._regex is None:
+            raise TypeError(
+                f"dewrap_match called on {self} which does not have a regex defined"
+            )
+        else:
+            m = self._regex.search(matchable)
+            if m:
+                self._rematch = m
+                self.text = m.group(0)
+                end = self._rematch.end()
+                frag_one.string = matchable[0:end]
+                frag_two.string = matchable[end:]
+                return True
+        return False
+
     def actuate(self, charsheet):
         self._actuator(charsheet, text=self.text, rematch=self._rematch)
 
@@ -84,13 +114,13 @@ class Parser:
             return False
         end = self._rematch.end()
         if end < len(frag.string):
-            pre = frag.string[end:]
-            post = frag.string[0:end]
+            post = frag.string[end:]
+            pre = frag.string[0:end]
             logging.debug(
                 "%s splitting fragment %s to %s & %s", self, frag.string, pre, post
             )
-            newfrag = Fragment(pre)
-            frag.string = post
+            newfrag = Fragment(post)
+            frag.string = pre
             return newfrag
         else:
             return False
@@ -156,6 +186,8 @@ class Document:
             else:
                 # Not accumulating (yet or at all)
                 match = parser.match(idx, frag)
+                if not match and parser.line_dewrap and (idx + 1) < len(self.frags):
+                    match = parser.dewrap_match(idx, frag, self.frags[idx + 1])
                 if match:
                     logging.debug(
                         "Document.single_pass %s match at idx %d / frag %s",

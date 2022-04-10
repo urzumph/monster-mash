@@ -10,6 +10,29 @@ name_re = re.compile("^([^:]+): (([^;]+); )?CR \d+;")
 type_re = re.compile(
     "^\s*(Fine|Diminutive|Tiny|Small|Medium|Large|Huge|Gargantuan|Colossal)(?:-size)? ([^;]+);"
 )
+# HD 10d8+10;
+# TODO: HD 3d8+9 plus 4d10+12;
+hd_re = re.compile("^\s*HD\s*(\d+)d\d+[+-]?\d*;")
+# hp 66;
+hp_re = re.compile("^\s*hp\s*(\d+);")
+# Init +8;
+init_re = re.compile("^\s*Init\s*([+-]?\d+);")
+# Spd 30 ft.;
+speed_re = re.compile("^\s*Spd\s*([^;]+);")
+# AC 23, touch 15, flat-footed 19;
+ac_re = re.compile(
+    f"^\s*AC\s*({shared.NUMBER_OR_DASH}+), touch\s*({shared.NUMBER_OR_DASH}+), flat-footed\s*({shared.NUMBER_OR_DASH}+)[^;]*;"
+)
+
+# AL CE; SV Fort +3, Ref +9, Will +11;
+alignment_re = re.compile(f"\s*AL\s*({shared.ALIGNMENT});")
+saves_re = re.compile(
+    f"^\s*SV\s*Fort ({shared.BONUS_OR_DASH}), Ref ({shared.BONUS_OR_DASH}), Will ({shared.BONUS_OR_DASH});"
+)
+# Str 14, Dex 18, Con —, Int 10, Wis 14, Cha 22.
+abilities_re = re.compile(
+    f"^\s*Str ({shared.NUMBER_OR_DASH}+), Dex ({shared.NUMBER_OR_DASH}+), Con ({shared.NUMBER_OR_DASH}+), Int ({shared.NUMBER_OR_DASH}+), Wis ({shared.NUMBER_OR_DASH}+), Cha ({shared.NUMBER_OR_DASH}+)."
+)
 
 
 def name(charsheet, rematch, **kwargs):
@@ -21,7 +44,45 @@ def mtype(charsheet, rematch, **kwargs):
     charsheet["size"] = rematch.group(1)
 
 
+def hd(charsheet, rematch, **kwargs):
+    charsheet["hd"] = int(rematch.group(1))
+
+
+def hp(charsheet, rematch, **kwargs):
+    charsheet["hp"] = int(rematch.group(1))
+
+
+def init(charsheet, rematch, **kwargs):
+    charsheet["init"] = rematch.group(1)
+
+
+def speed(charsheet, rematch, **kwargs):
+    charsheet["speed"] = rematch.group(1)
+
+
+def alignment(charsheet, rematch, **kwargs):
+    charsheet["alignment"] = rematch.group(1)
+
+
 parsers = [
     parser.Parser("cotsq_name", name, index=0, regex=name_re, bam=True),
     parser.Parser("cotsq_type", mtype, regex=type_re, bam=True),
+    parser.Parser("cotsq_hd", hd, regex=hd_re, bam=True, line_dewrap=True),
+    parser.Parser("cotsq_hp", hp, regex=hp_re, bam=True, line_dewrap=True),
+    parser.Parser("cotsq_init", init, regex=init_re, bam=True, line_dewrap=True),
+    parser.Parser("cotsq_speed", speed, regex=speed_re, bam=True, line_dewrap=True),
+    parser.Parser("cotsq_ac", shared.ac, regex=ac_re, bam=True, line_dewrap=True),
+    parser.Parser(
+        "cotsq_alignment", alignment, regex=alignment_re, bam=True, line_dewrap=True
+    ),
+    parser.Parser(
+        "cotsq_saves", shared.saves, regex=saves_re, bam=True, line_dewrap=True
+    ),
+    parser.Parser(
+        "cotsq_abilities",
+        shared.abilities,
+        regex=abilities_re,
+        bam=True,
+        line_dewrap=True,
+    ),
 ]
