@@ -1,7 +1,11 @@
+import re
+
+
 class RegexIter:
-    def __init__(self, string, regex):
+    def __init__(self, string, regex, junk=[]):
         self.remainder = string
         self.regex = regex
+        self.junk = junk
 
     def __iter__(self):
         return self
@@ -9,6 +13,13 @@ class RegexIter:
     def __next__(self):
         m = self.regex.match(self.remainder)
         if not m:
+            # Check for junk
+            for j in self.junk:
+                jm = j.match(self.remainder)
+                if jm:
+                    # Found junk
+                    self.remainder = self.remainder[len(jm.group(0)) :]
+                    return self.__next__()
             raise StopIteration
         else:
             self.remainder = self.remainder[len(m.group(0)) :]
@@ -38,3 +49,10 @@ def maybe_int(text):
     except ValueError:
         pass
     return toret
+
+
+word_wrap = re.compile("(\w)- ")
+
+
+def undo_word_wrap(text):
+    return word_wrap.sub("\g<1>", text)

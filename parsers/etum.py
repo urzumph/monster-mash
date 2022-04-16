@@ -31,12 +31,9 @@ bab_re = re.compile(f"^\s*Base Atk [+]?([\-\d]+); Grp [+]?({shared.NUMBER_OR_DAS
 
 # Used in multiple places, so adding to the start
 def inner_skills(charsheet, text, **kwargs):
-    # print(f"inner_skills@start:{text}")
     rxi = utils.RegexIter(text, skill_split_re)
     for m in iter(rxi):
-        # print(f"inner_skills@for:{m.group(1)}")
         charsheet["skills"][m.group(1)] = m.group(2)
-    # print("Left over from inner_skills: ", rxi.remainder)
 
 
 # Ster Longhorn, Minotaur Chief

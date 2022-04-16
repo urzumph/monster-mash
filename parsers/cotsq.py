@@ -1,4 +1,5 @@
 import re
+import logging
 from . import parser
 from . import utils
 from . import shared
@@ -34,6 +35,13 @@ abilities_re = re.compile(
     f"^\s*Str ({shared.NUMBER_OR_DASH}+), Dex ({shared.NUMBER_OR_DASH}+), Con ({shared.NUMBER_OR_DASH}+), Int ({shared.NUMBER_OR_DASH}+), Wis ({shared.NUMBER_OR_DASH}+), Cha ({shared.NUMBER_OR_DASH}+)."
 )
 
+# Skills and Feats:
+saf_re = re.compile("^\s*Skills and Feats:")
+saf_end_re = re.compile("\.")
+skill_split_re = re.compile("^,?\s*(\w+(?: [\(\)\w]+)?) ([+\-]\d+)")
+skill_note_re = re.compile("\s*\([^\)]*\)")
+feat_start_re = re.compile(";\s*")
+
 
 def name(charsheet, rematch, **kwargs):
     charsheet["name"] = rematch.group(1)
@@ -64,6 +72,17 @@ def alignment(charsheet, rematch, **kwargs):
     charsheet["alignment"] = rematch.group(1)
 
 
+def saf(charsheet, text, **kwargs):
+    to_parse = utils.prechomp_regex(text, saf_re)
+    to_parse = utils.undo_word_wrap(to_parse)
+    logging.debug("cotsq.saf: post-undo_word_wrap: %s", to_parse)
+    rxi = utils.RegexIter(to_parse, skill_split_re, [skill_note_re])
+    for m in iter(rxi):
+        charsheet["skills"][m.group(1)] = m.group(2)
+    to_parse = utils.prechomp_regex(rxi.remainder, feat_start_re)
+    charsheet["feats"] = to_parse.rstrip(". ")
+
+
 parsers = [
     parser.Parser("cotsq_name", name, index=0, regex=name_re, bam=True),
     parser.Parser("cotsq_type", mtype, regex=type_re, bam=True),
@@ -84,5 +103,14 @@ parsers = [
         regex=abilities_re,
         bam=True,
         line_dewrap=True,
+    ),
+    parser.Parser(
+        "cotsq_saf",
+        saf,
+        regex=saf_re,
+        accumulate=True,
+        accum_end_regex=saf_end_re,
+        accum_include_end=True,
+        bam=True,
     ),
 ]

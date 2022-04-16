@@ -24,5 +24,18 @@
     "int": 10,
     "wis": 14,
     "cha": 22
-    }
+    },
+"skills": {
+    "Bluff": "+14",
+    "Concentration": "+17",
+    "Hide": "+12",
+    "Knowledge (arcana)": "+11",
+    "Listen": "+12",
+    "Move Silently": "+12",
+    "Search": "+8",
+    "Sense Motive": "+10",
+    "Spellcraft": "+11",
+    "Spot": "+12"
+    },
+"feats": "Alertness, Combat Casting, Combat Reflexes, Dodge, Improved Initiative, Iron Will, Lightning Reflexes, Mobility, Toughness"
 }

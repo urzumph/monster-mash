@@ -154,6 +154,9 @@ class SubSheet:
     def __str__(self):
         return str(self._values)
 
+    def __repr__(self):
+        return self.__str__()
+
     def append():
         result = self._check_assignment(key, value)
         if not isinstance(self._values[key], list):

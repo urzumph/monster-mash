@@ -24,5 +24,24 @@
     "int": 14,
     "wis": 12,
     "cha": 17
-    }
+    },
+"skills": {
+    "Appraise": "+3",
+    "Climb": "+10",
+    "Concentration": "+5",
+    "Disable Device": "+3",
+    "Disguise": "+10",
+    "Hide": "+12",
+    "Intuit Direction": "+3",
+    "Jump": "+16",
+    "Listen": "+15",
+    "Move Silently": "+12",
+    "Open Lock": "+3",
+    "Search": "+3",
+    "Spellcraft": "+5",
+    "Spot": "+13",
+    "Tumble": "+5",
+    "Wilderness Lore": "+3"
+    },
+"feats": "Alertness, Dodge, Multiattack"
 }
