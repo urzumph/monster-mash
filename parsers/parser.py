@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import logging
+import collections
 
 
 class Fragment:
@@ -31,6 +32,7 @@ class Parser:
         regex=None,
         accumulate=False,
         accum_end_regex=None,
+        accum_include_end=False,
         bam=False,
         line_dewrap=False,
     ):
@@ -41,13 +43,16 @@ class Parser:
         self._rematch = None
         self.accumulater = accumulate
         self._end_regex = accum_end_regex
+        self.accum_include_end = accum_include_end
         self.line_dewrap = line_dewrap
         if self.accumulater and not self._end_regex:
             raise ValueError("In accumulater mode, an end regex is required")
         # Break after match
         self.bam = bam
-        if self.accumulater and self.bam:
-            raise ValueError("Cannot use accumulation and break-after-match together")
+        if (self.accumulater and not self.accum_include_end) and self.bam:
+            raise ValueError(
+                "Cannot use non-inclusive accumulation and break-after-match together"
+            )
         if self.accumulater and self.line_dewrap:
             raise ValueError("Cannot use accumulation and line-dewrap together")
 
@@ -102,17 +107,23 @@ class Parser:
     def actuate(self, charsheet):
         self._actuator(charsheet, text=self.text, rematch=self._rematch)
 
-    def split(self, frag):
+    def split(self, frag, end=False):
         """Given a fragment which this parser match()'d,
         modify the fragment to include only the matched text
         from the match() and return a new fragment containing
         all of the remaining text."""
-        if not self._rematch:
+        match = self._rematch
+        if end:
+            match = self._end_rematch
+        if not match:
             logging.debug(
-                "%s failed to split non-regex matched fragment %s", self, frag
+                "%s failed to split non-regex matched fragment %s (end=%s)",
+                self,
+                frag,
+                end,
             )
             return False
-        end = self._rematch.end()
+        end = match.end()
         if end < len(frag.string):
             post = frag.string[end:]
             pre = frag.string[0:end]
@@ -128,15 +139,25 @@ class Parser:
     def accumulate(self, idx, frag):
         """Determine whether the passed fragment is the end of the accumulated
         text, and if not add it to the gathered text of this parser."""
-        m = self._end_regex.search(frag.string)
-        if m:
-            return True
-        else:
+        self._end_rematch = self._end_regex.search(frag.string)
+        result = False
+        if self._end_rematch:
+            result = True
+        if not result or self.accum_include_end:
             # if none already exists, force whitespace at line breaks
             if self.text[-1] != " ":
                 self.text += " "
-            self.text += frag.string
-        return False
+            to_append = frag.string
+            # If we're going to break after this, we need to remove the non-matched post text, otherwise it will be included in the accumulation.
+            if result and self.bam:
+                to_append = frag.string[0 : self._end_rematch.end()]
+            logging.debug(
+                "Parser.accumulate(%s) appending %s to accummulation.",
+                self.name,
+                to_append,
+            )
+            self.text += to_append
+        return result
 
     def __str__(self):
         return f"Parser({self.name})"
@@ -163,6 +184,14 @@ class Document:
             s += f"{f}\n"
         return s
 
+    def do_bam(self, parser, idx, accum_end):
+        if not parser.bam:
+            return
+        frag = self.frags[idx]
+        remainder = parser.split(frag, accum_end)
+        if remainder:
+            self.frags = self.frags[0 : idx + 1] + [remainder] + self.frags[idx + 1 :]
+
     def single_pass(self, parser, charsheet, offset):
         logging.debug(
             "Document.single_pass starting on parser %s with offset %d",
@@ -172,17 +201,29 @@ class Document:
         accum = False
         end_accum = False
         for idx, frag in enumerate(self.frags[offset:], offset):
-            # print(f"enumerate: idx: {idx} frag: {frag}")
+            logging.debug(f"Document.single_pass enumerate: idx: {idx} frag: {frag}")
             if accum:
                 # We have already matched and are accumulating
                 end_accum = parser.accumulate(idx, frag)
                 if end_accum:
-                    # print("accum actuate")
-                    parser.actuate(charsheet)
+                    logging.debug(
+                        "Document.single_pass end_accum found for parser %s with idx %d, frag %s",
+                        parser.name,
+                        idx,
+                        frag.string,
+                    )
                     # Returned index needs to be last of the matching lines for this pass.
-                    return idx - 1
+                    last = idx - 1
+                    if parser.accum_include_end:
+                        frag.register_match(parser.name)
+                        self.do_bam(parser, idx, True)
+                        last = idx
+
+                    parser.actuate(charsheet)
+                    return last
                 else:
                     frag.register_match(parser.name)
+
             else:
                 # Not accumulating (yet or at all)
                 match = parser.match(idx, frag)
@@ -201,15 +242,7 @@ class Document:
                         continue
                     # print("non-accum actuate")
                     parser.actuate(charsheet)
-                    if parser.bam:
-                        remainder = parser.split(frag)
-                        if remainder:
-                            self.frags = (
-                                self.frags[0 : idx + 1]
-                                + [remainder]
-                                + self.frags[idx + 1 :]
-                            )
-
+                    self.do_bam(parser, idx, False)
                     return idx
         else:
             if accum:
