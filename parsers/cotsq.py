@@ -26,7 +26,7 @@ ac_re = re.compile(
 )
 
 # AL CE; SV Fort +3, Ref +9, Will +11;
-alignment_re = re.compile(f"\s*AL\s*({shared.ALIGNMENT});")
+alignment_re = re.compile(f"^\s*AL\s*({shared.ALIGNMENT});")
 saves_re = re.compile(
     f"^\s*SV\s*Fort ({shared.BONUS_OR_DASH}), Ref ({shared.BONUS_OR_DASH}), Will ({shared.BONUS_OR_DASH});"
 )
@@ -41,6 +41,13 @@ saf_end_re = re.compile("\.")
 skill_split_re = re.compile("^,?\s*(\w+(?: [\(\)\w]+)?) ([+\-]\d+)")
 skill_note_re = re.compile("\s*\([^\)]*\)")
 feat_start_re = re.compile(";\s*")
+
+# Atk
+atk_re = re.compile("^\s*Atk ([^;]+);")
+
+# SA/SQ
+saq_re = re.compile("^\s*(S[AQ]) ")
+saq_end_re = re.compile(";")
 
 
 def name(charsheet, rematch, **kwargs):
@@ -83,6 +90,19 @@ def saf(charsheet, text, **kwargs):
     charsheet["feats"] = to_parse.rstrip(". ")
 
 
+def atk(charsheet, rematch, **kwargs):
+    charsheet["attack"] = rematch.group(1)
+    charsheet["fullAttack"] = rematch.group(1)
+
+
+def saq(charsheet, text, rematch, **kwargs):
+    index = rematch.group(1).lower()
+    fixed = utils.prechomp_regex(text, saq_re)
+    fixed = utils.undo_word_wrap(fixed)
+    fixed = fixed.rstrip(";")
+    charsheet[index] = fixed
+
+
 parsers = [
     parser.Parser("cotsq_name", name, index=0, regex=name_re, bam=True),
     parser.Parser("cotsq_type", mtype, regex=type_re, bam=True),
@@ -91,6 +111,16 @@ parsers = [
     parser.Parser("cotsq_init", init, regex=init_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_speed", speed, regex=speed_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_ac", shared.ac, regex=ac_re, bam=True, line_dewrap=True),
+    parser.Parser("cotsq_atk", atk, regex=atk_re, bam=True, line_dewrap=True),
+    parser.Parser(
+        "cotsq_saq",
+        saq,
+        regex=saq_re,
+        accumulate=True,
+        accum_end_regex=saq_end_re,
+        accum_include_end=True,
+        bam=True,
+    ),
     parser.Parser(
         "cotsq_alignment", alignment, regex=alignment_re, bam=True, line_dewrap=True
     ),

@@ -43,5 +43,9 @@
     "Tumble": "+5",
     "Wilderness Lore": "+3"
     },
-"feats": "Alertness, Dodge, Multiattack"
+"feats": "Alertness, Dodge, Multiattack",
+"attack": "+14 melee (1d6+4 plus paralysis, bite) and +12 melee (1d4+3 plus paralysis, 2 claws)",
+"fullAttack": "+14 melee (1d6+4 plus paralysis, bite) and +12 melee (1d4+3 plus paralysis, 2 claws)",
+"sa": "consume*, paralysis* (DC 16), pounce*, spell-like abilities*, summon creatures*",
+"sq": "assume shape* (male human rogue, male drow fighter, female human barbarian, male gnoll ranger, female drow cleric of Lolth), DR 20/+2*, outsider traits*, SR 21, tanar’ri traits*"
 }

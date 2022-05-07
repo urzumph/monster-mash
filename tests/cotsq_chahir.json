@@ -37,5 +37,9 @@
     "Spellcraft": "+11",
     "Spot": "+12"
     },
-"feats": "Alertness, Combat Casting, Combat Reflexes, Dodge, Improved Initiative, Iron Will, Lightning Reflexes, Mobility, Toughness"
+"feats": "Alertness, Combat Casting, Combat Reflexes, Dodge, Improved Initiative, Iron Will, Lightning Reflexes, Mobility, Toughness",
+"attack": "+6 melee (1d6+3, slam)",
+"fullAttack": "+6 melee (1d6+3, slam)",
+"sa": "vampire attacks (see Vampires sidebar, page 134)",
+"sq": "DR 15/+1, turn resistance +4, vampire traits (see Vampires sidebar, page 134)"
 }

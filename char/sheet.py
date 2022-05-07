@@ -215,6 +215,7 @@ CHARACTER_DATATYPES = {
     "saves": SUBSHEET,
     "abilities": SUBSHEET,
     "moves": SUBSHEET,
+    "sa": ARBITRARY_STRING,
     "sq": ARBITRARY_STRING,
 }
 

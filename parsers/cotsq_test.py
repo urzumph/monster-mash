@@ -24,7 +24,7 @@ class TestCotsqParser(unittest.TestCase):
             jres = char.Sheet()
             jres.from_json(jt)
             result = char.Sheet()
-            logging.debug("Initiating parse of %s with %s", jt, cotsq.parsers)
+            logging.debug("Initiating parse of %s with %s", text, cotsq.parsers)
             doc.parse(cotsq.parsers, result)
             logging.debug("Test parse of %s complete", jt)
             self.assertEqual(result, jres, f"Parsed:\n{result}\nParser results:\n{doc}")

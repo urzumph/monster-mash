@@ -22,6 +22,9 @@ class Fragment:
         else:
             return f"'{self.string}' - Unmatched"
 
+    def __repr__(self):
+        return f"Fragment({self.string})"
+
 
 class Parser:
     def __init__(
@@ -189,8 +192,10 @@ class Document:
             return
         frag = self.frags[idx]
         remainder = parser.split(frag, accum_end)
+        logging.debug("Document.do_bam before: %s", self.frags)
         if remainder:
             self.frags = self.frags[0 : idx + 1] + [remainder] + self.frags[idx + 1 :]
+        logging.debug("Document.do_bam after: %s", self.frags)
 
     def single_pass(self, parser, charsheet, offset):
         logging.debug(
