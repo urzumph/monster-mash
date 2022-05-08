@@ -9,7 +9,7 @@ from . import sheet
 class TestSheet(unittest.TestCase):
     def test_check_assignment(self):
         s = sheet.Sheet()
-        with self.assertRaises(TypeError):
+        with self.assertRaises(KeyError):
             s._check_assignment("potato", "is potato")
         with self.assertRaises(ValueError):
             s._check_assignment("name", dict())
@@ -34,6 +34,17 @@ class TestSheet(unittest.TestCase):
         s = sheet.Sheet()
         with self.assertRaises(KeyError):
             test = s["invalid"]
+
+    def test_default_failure(self):
+        s = sheet.Sheet()
+        with self.assertRaises(KeyError):
+            test = s["space"]
+
+    def test_default_success(self):
+        s = sheet.Sheet()
+        s["size"] = "Medium"
+        self.assertEqual(s["space"], 5)
+        self.assertEqual(s["reach"], 5)
 
 
 if __name__ == "__main__":

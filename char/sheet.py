@@ -67,6 +67,36 @@ def valid_size(val):
         return f"{val} is not a valid size"
 
 
+# https://www.d20srd.org/srd/combat/movementPositionAndDistance.htm
+DEFAULT_SPACE_REACH = {
+    "Fine": {"space": "1/2", "reach": 0},
+    "Diminutive": {"space": 1, "reach": 0},
+    "Tiny": {"space": "2 1/2", "reach": 0},
+    "Small": {"space": 5, "reach": 5},
+    "Medium": {"space": 5, "reach": 5},
+    "Large": {"space": 10, "reach": 5},
+    "Huge": {"space": 15, "reach": 10},
+    "Gargantuan": {"space": 20, "reach": 15},
+    "Colossal": {"space": 30, "reach": 20},
+}
+
+
+def default_space_reach(sheet, key):
+    try:
+        size = sheet["size"]
+        return DEFAULT_SPACE_REACH[size][key]
+    except KeyError:
+        return None
+
+
+def default_space(sheet):
+    return default_space_reach(sheet, "space")
+
+
+def default_reach(sheet):
+    return default_space_reach(sheet, "reach")
+
+
 def stringify(val):
     return str(val)
 
@@ -99,9 +129,10 @@ def is_type(val):
 
 
 class DataType:
-    def __init__(self, retoucher, validator):
+    def __init__(self, retoucher, validator, default=None):
         self._retoucher = retoucher
         self._validator = validator
+        self._default = default
 
     def retouch(self, val):
         if self._retoucher is None:
@@ -111,6 +142,11 @@ class DataType:
     def validate(self, val):
         return self._validator(val)
 
+    def default(self, sheet):
+        if self._default is None:
+            return None
+        return self._default(sheet)
+
 
 class SubSheet:
     def __init__(self, dts):
@@ -118,25 +154,40 @@ class SubSheet:
         self._values = dict()
         self._read = dict()
 
-    def _check_assignment(self, key, value):
+    def _get_dt(self, key):
         dt = None
         if key in self._dts:
             dt = self._dts[key]
         elif "*" in self._dts:
             dt = self._dts["*"]
         else:
-            raise TypeError(f"{key} is not a configured sheet attribute")
+            raise KeyError(f"{key} is not a configured sheet attribute")
+        return dt
 
+    def _check_assignment(self, key, value):
+        dt = self._get_dt(key)
         validation = dt.validate(value)
         if validation is not None:
             raise ValueError(f"Failed to set {key} to '{value}': {validation}")
         return dt.retouch(value)
 
     def __getitem__(self, key):
-        # TODO: Add logic for defaults here, maybe
-        val = self._values[key]
-        self._read[key] = True
-        return val
+        val = None
+        if key in self._values:
+            val = self._values[key]
+            self._read[key] = True
+            return val
+
+        dt = self._get_dt(key)
+        if dt is None:
+            raise KeyError(
+                f"Unable to find datatype for key {key} when checking for default values"
+            )
+        val = dt.default(self)
+        if val is not None:
+            self._read[key] = True
+            return val
+        raise KeyError(f"Key {key} not set and no default available")
 
     def __setitem__(self, key, value):
         result = self._check_assignment(key, value)
@@ -204,8 +255,8 @@ CHARACTER_DATATYPES = {
     "senses": ARBITRARY_STRING,
     "attack": ARBITRARY_STRING,
     "fullAttack": ARBITRARY_STRING,
-    "space": INTEGER,
-    "reach": INTEGER,
+    "space": DataType(None, is_integer, default=default_space),
+    "reach": DataType(None, is_integer, default=default_reach),
     "bab": INTEGER,
     "grapple": INTEGER,
     "feats": ARBITRARY_STRING,
