@@ -8,12 +8,23 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+MODES = [parsers.etum_mode, parsers.cotsq_mode]
+
 
 def parse(intext):
-    result = char.Sheet()
-    doc = parsers.Document(intext)
-    doc.parse(parsers.etum_mode, result)
-    return result
+    best_result = None
+    best_score = -1
+
+    for m in MODES:
+        result = char.Sheet()
+        doc = parsers.Document(intext)
+        doc.parse(m, result)
+        score = doc.score()
+        if score > best_score:
+            best_result = result
+            best_score = score
+
+    return best_result
 
 
 if __name__ == "__main__":

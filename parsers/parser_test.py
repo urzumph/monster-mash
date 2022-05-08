@@ -206,6 +206,102 @@ class TestParser(unittest.TestCase):
         )
         self.assertEqual(self.call_count(), 1)
 
+    def test_parser_multi_logic(self):
+        hit_re = re.compile("^012")
+        miss_re = re.compile("[abc]+")
+        ## Index ONLY
+        doc = parser.Document(["012", "abc", "678"])
+        pobj = parser.Parser(self.id() + "_INDEX_ONLY", self.expect("012"), index=0)
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {
+                    "string": "012",
+                    "matched": True,
+                    "matcher": self.id() + "_INDEX_ONLY",
+                },
+                {"string": "abc", "matched": False, "matcher": None},
+                {"string": "678", "matched": False, "matcher": None},
+            ],
+        )
+        ## REGEX ONLY
+        doc = parser.Document(["012", "abc", "678"])
+        pobj = parser.Parser(
+            self.id() + "_REGEX_ONLY",
+            self.expect("012"),
+            regex=hit_re,
+        )
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {
+                    "string": "012",
+                    "matched": True,
+                    "matcher": self.id() + "_REGEX_ONLY",
+                },
+                {"string": "abc", "matched": False, "matcher": None},
+                {"string": "678", "matched": False, "matcher": None},
+            ],
+        )
+        ## BOTH, MATCH BOTH
+        doc = parser.Document(["012", "abc", "678"])
+        pobj = parser.Parser(
+            self.id() + "_FULL_MATCH",
+            self.expect("012"),
+            index=0,
+            regex=hit_re,
+        )
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {
+                    "string": "012",
+                    "matched": True,
+                    "matcher": self.id() + "_FULL_MATCH",
+                },
+                {"string": "abc", "matched": False, "matcher": None},
+                {"string": "678", "matched": False, "matcher": None},
+            ],
+        )
+        ## BOTH, MATCH RE ONLY
+        doc = parser.Document(["012", "abc", "678"])
+        pobj = parser.Parser(
+            self.id() + "_HALF_MATCH_RE",
+            self.expect("012"),
+            index=1,
+            regex=hit_re,
+        )
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "012", "matched": False, "matcher": None},
+                {"string": "abc", "matched": False, "matcher": None},
+                {"string": "678", "matched": False, "matcher": None},
+            ],
+        )
+        ## BOTH, MATCH INDEX ONLY
+        doc = parser.Document(["012", "abc", "678"])
+        pobj = parser.Parser(
+            self.id() + "_HALF_MATCH_IDX",
+            self.expect("012"),
+            index=0,
+            regex=miss_re,
+        )
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "012", "matched": False, "matcher": None},
+                {"string": "abc", "matched": False, "matcher": None},
+                {"string": "678", "matched": False, "matcher": None},
+            ],
+        )
+        self.assertEqual(self.call_count(), 3)
+
     def test_document(self):
         pobj = parser.Parser("test parser", self.expect("a"), index=0)
         doc = parser.Document(["a", "b"])
@@ -218,6 +314,7 @@ class TestParser(unittest.TestCase):
                 {"string": "b", "matched": False, "matcher": None},
             ],
         )
+        self.assertEqual(doc.score(), 1 / 2)
         self.assertEqual(self.call_count(), 1)
 
 

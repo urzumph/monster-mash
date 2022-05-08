@@ -63,12 +63,14 @@ class Parser:
         logging.debug("%s.match(idx %d , frag %s)", self, idx, frag.string)
         self.text = ""
         # Multiple matches may be required.
-        # Match logic is ANY OF
+        # Match logic is at least one, and all supplied match
         to_ret = False
         if self._index is not None:
             if idx == self._index:
                 self.text = frag.string
                 to_ret = True
+            else:
+                return False
         if self._regex is not None:
             m = self._regex.search(frag.string)
             if m:
@@ -80,6 +82,8 @@ class Parser:
                 else:
                     self.text = m.group(0)
                 to_ret = True
+            else:
+                return False
         return to_ret
 
     def dewrap_match(self, idx, frag_one, frag_two):
@@ -180,6 +184,15 @@ class Document:
         for f in self.frags:
             res.append(f.as_dict())
         return res
+
+    def score(self):
+        num = 0
+        denum = 0
+        for f in self.frags:
+            denum += len(f.string)
+            if f.matched:
+                num += len(f.string)
+        return num / denum
 
     def __str__(self):
         s = ""

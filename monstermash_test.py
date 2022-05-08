@@ -10,13 +10,10 @@ class TestMonsterMash(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
 
-    tests = ["etum_minotaurchief", "etum_psihulk"]
+    tests = ["etum_minotaurchief", "etum_psihulk", "cotsq_chahir", "cotsq_maurezhi"]
 
     def test_parse(self):
-        # TODO: Testing of the parsing results makes more sense
-        # in the tests of the parsers themselves.
-        # This should test logic specific to the monstermash
-        # parse function, but it's logic is currently very limited.
+        # Moreso than the parsing itself, this tests the automatic type detection.
         for t in self.tests:
             text = pathlib.Path("tests/" + t + ".txt").read_text()
             tarr = text.split("\n")
