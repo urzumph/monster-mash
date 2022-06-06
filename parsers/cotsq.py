@@ -5,11 +5,11 @@ from . import utils
 from . import shared
 
 # Chahir: Male human vampire Sor8; CR 10;
-name_re = re.compile("^([^:]+): (([^;]+); )?CR \d+;")
+name_re = re.compile("^([^:]+): (([^;]+\d); )?(CR \d+;)?")
 # Medium-size outsider (chaotic, evil);
 # Medium-size undead;
 type_re = re.compile(
-    "^\s*(Fine|Diminutive|Tiny|Small|Medium|Large|Huge|Gargantuan|Colossal)(?:-size)? ([^;]+);"
+    "^\s*(Fine|Diminutive|Tiny|Small|Medium|Large|Huge|Gargantuan|Colossal)(?:-size)?\s+([^;]+);"
 )
 # HD 10d8+10;
 # TODO: HD 3d8+9 plus 4d10+12;
@@ -22,23 +22,24 @@ init_re = re.compile("^\s*Init\s*([+-]?\d+);")
 speed_re = re.compile("^\s*Spd\s*([^;]+);")
 # AC 23, touch 15, flat-footed 19;
 ac_re = re.compile(
-    f"^\s*AC\s*({shared.NUMBER_OR_DASH}+), touch\s*({shared.NUMBER_OR_DASH}+), flat-footed\s*({shared.NUMBER_OR_DASH}+)[^;]*;"
+    f"^\s*AC\s*({shared.NUMBER_OR_DASH}+),\s*touch\s*({shared.NUMBER_OR_DASH}+),\s*flat-footed\s*({shared.NUMBER_OR_DASH}+)[^;]*;"
 )
 
 # AL CE; SV Fort +3, Ref +9, Will +11;
 alignment_re = re.compile(f"^\s*AL\s*({shared.ALIGNMENT});")
 saves_re = re.compile(
-    f"^\s*SV\s*Fort ({shared.BONUS_OR_DASH}), Ref ({shared.BONUS_OR_DASH}), Will ({shared.BONUS_OR_DASH});"
+    f"^\s*SV\s*Fort\s+({shared.BONUS_OR_DASH}),\s+Ref\s+({shared.BONUS_OR_DASH}),\s+Will\s+({shared.BONUS_OR_DASH});"
 )
 # Str 14, Dex 18, Con —, Int 10, Wis 14, Cha 22.
 abilities_re = re.compile(
-    f"^\s*Str ({shared.NUMBER_OR_DASH}+), Dex ({shared.NUMBER_OR_DASH}+), Con ({shared.NUMBER_OR_DASH}+), Int ({shared.NUMBER_OR_DASH}+), Wis ({shared.NUMBER_OR_DASH}+), Cha ({shared.NUMBER_OR_DASH}+)."
+    f"^\s*Str\s+({shared.NUMBER_OR_DASH}+),\s+Dex ({shared.NUMBER_OR_DASH}+),\s+Con ({shared.NUMBER_OR_DASH}+),\s+Int ({shared.NUMBER_OR_DASH}+),\s+Wis ({shared.NUMBER_OR_DASH}+),\s+Cha ({shared.NUMBER_OR_DASH}+)[\.;]"
 )
+moves_re = re.compile("^(.+?) \(?(Su|Ex|Traits)\)?:")
 
 # Skills and Feats:
 saf_re = re.compile("^\s*Skills and Feats:")
 saf_end_re = re.compile("\.")
-skill_split_re = re.compile("^,?\s*(\w+(?: [\(\)\w]+)?) ([+\-]\d+)")
+skill_split_re = re.compile("^,?\s*(\w+(?: [\(\)\w]+)?)\s+([+\-]\d+)")
 skill_note_re = re.compile("\s*\([^\)]*\)")
 feat_start_re = re.compile(";\s*")
 
@@ -103,9 +104,18 @@ def saq(charsheet, text, rematch, **kwargs):
     charsheet[index] = fixed
 
 
+def moves(charsheet, text, rematch, **kwargs):
+    mname = rematch.group(1)
+    move = {"name": mname, "type": rematch.group(2)}
+    desc = utils.prechomp_regex(text, moves_re)
+    desc = desc.strip()
+    move["desc"] = desc
+    charsheet["moves"][mname] = move
+
+
 parsers = [
     parser.Parser("cotsq_name", name, index=0, regex=name_re, bam=True),
-    parser.Parser("cotsq_type", mtype, regex=type_re, bam=True),
+    parser.Parser("cotsq_type", mtype, regex=type_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_hd", hd, regex=hd_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_hp", hp, regex=hp_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_init", init, regex=init_re, bam=True, line_dewrap=True),
@@ -142,5 +152,12 @@ parsers = [
         accum_end_regex=saf_end_re,
         accum_include_end=True,
         bam=True,
+    ),
+    parser.Parser(
+        "cotsq_moves",
+        moves,
+        regex=moves_re,
+        accumulate=True,
+        accum_end_regex=moves_re,
     ),
 ]

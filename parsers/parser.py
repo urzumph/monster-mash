@@ -272,6 +272,7 @@ class Document:
         logging.debug("Document.parse started with parsers: %s", parsers)
         for parser in parsers:
             logging.debug("Document.parse starting parser: %s", parser.name)
+            logging.debug("Current doc state:\n%s", self)
             start = 0
             matched = False
             while start is not None and start < len(self.frags):

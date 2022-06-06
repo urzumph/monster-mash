@@ -46,3 +46,8 @@ class TestUtils(unittest.TestCase):
         s = "10"
         r = utils.maybe_int(s)
         self.assertEqual(r, 10)
+
+    def test_undo_word_wrap(self):
+        s = "word-\n wrap"
+        r = utils.undo_word_wrap(s)
+        self.assertEqual(r, "wordwrap")

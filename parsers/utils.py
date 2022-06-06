@@ -55,4 +55,5 @@ word_wrap = re.compile("(\w)- ")
 
 
 def undo_word_wrap(text):
+    text = text.replace("\n", "")
     return word_wrap.sub("\g<1>", text)

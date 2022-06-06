@@ -1,0 +1,33 @@
+{
+"name":"Statue",
+"type": "Construct",
+"size": "Large",
+"hd": 4,
+"hp": 21,
+"init": "+0",
+"speed": "30 ft.",
+"ac": {
+    "base": "14",
+    "touch": "9",
+    "flat": "14"
+    },
+"saves": {
+    "fort": "+2",
+    "ref": "+2",
+    "will": "+6"
+    },
+"alignment": "LN",
+"abilities": {
+    "str": 16,
+    "dex": 10,
+    "con": "—",
+    "int": 12,
+    "wis": 10,
+    "cha": 19
+    },
+"skills": {
+    },
+"attack": "+8/+3 melee (1d8+4, slam)",
+"fullAttack": "+8/+3 melee (1d8+4, slam)",
+"sq": "hardness 8"
+}

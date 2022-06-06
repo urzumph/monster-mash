@@ -12,7 +12,7 @@ class TestCotsqParser(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
 
-    tests = ["cotsq_chahir", "cotsq_maurezhi"]
+    tests = ["cotsq_chahir", "cotsq_maurezhi", "cotsq_statue"]
 
     def test_parser(self):
         logging.debug("Starting Cotsq Parser test")

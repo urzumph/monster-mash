@@ -41,5 +41,12 @@
 "attack": "+6 melee (1d6+3, slam)",
 "fullAttack": "+6 melee (1d6+3, slam)",
 "sa": "vampire attacks (see Vampires sidebar, page 134)",
-"sq": "DR 15/+1, turn resistance +4, vampire traits (see Vampires sidebar, page 134)"
+"sq": "DR 15/+1, turn resistance +4, vampire traits (see Vampires sidebar, page 134)",
+"moves": {
+    "Turn Resistance":{
+        "name": "Turn Resistance",
+        "type": "Ex",
+        "desc": "When resolving a turn, rebuke, command, or bolster attempt, Chahir is treated as a 12-HD creature. Chahir’s Power-Up Suite: Chahir prepares for battle by casting mage armor. His increased AC is not included in the statistics above, but it is reflected in the powered-up statistics below. Powered-Up Statistics: AC 25, touch 15, flat-footed 21 (mage armor)."
+        }
+    }
 }

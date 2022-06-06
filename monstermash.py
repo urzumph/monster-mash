@@ -65,9 +65,19 @@ def set_in_roll20(name, details, index):
 
 
 def calc_ability_mod(val):
-    if not isinstance(val, int):
+    intval = None
+    if isinstance(val, int):
+        intval = val
+    else:
+        try:
+            intval = int(val)
+        except ValueError:
+            pass
+
+    if intval is None:
         return "-"
-    return math.floor((val - 10) / 2)
+    else:
+        return math.floor((intval - 10) / 2)
 
 
 def send_to_browser(details):
@@ -118,8 +128,9 @@ def send_to_browser(details):
     # Speed
     set_in_roll20("attr_npcspeed", details, "speed")
 
-    desc = "Senses: " + details["senses"] + "\n"
-    set_val("attr_npcdescr", desc)
+    if details["senses"]:
+        desc = "Senses: " + details["senses"] + "\n"
+        set_val("attr_npcdescr", desc)
 
     skills = ""
     for k, v in details["skills"].items():
@@ -127,7 +138,7 @@ def send_to_browser(details):
     set_val("attr_npcskills", skills)
 
     combatdesc = ""
-    for m in details["moves"]:
+    for k, m in details["moves"].items():
         combatdesc += f'{m["name"]} ({m["type"]})\n'
         combatdesc += "-" * 10 + "\n"
         combatdesc += m["desc"] + "\n\n"
@@ -146,6 +157,7 @@ if __name__ == "__main__":
             current = parse(accumulated)
             print(current)
             send_to_browser(current)
+            print("Send to browser complete")
             accumulated = []
         else:
             accumulated.append(line)

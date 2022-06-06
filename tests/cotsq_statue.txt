@@ -1,0 +1,4 @@
+Statue: Large Construct; HD 4d10; hp 21; Init +0; Spd 30 ft.; AC
+14, touch 9, flat-footed 14; Atk +8/+3 melee (1d8+4, slam); SQ hard-
+ness 8; AL LN; SV Fort +2, Ref +2, Will +6; Str 16, Dex 10, Con —,
+Int 12, Wis 10, Cha 19; Hide +6.

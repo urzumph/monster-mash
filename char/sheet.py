@@ -97,6 +97,10 @@ def default_reach(sheet):
     return default_space_reach(sheet, "reach")
 
 
+def empty_string(sheet):
+    return ""
+
+
 def stringify(val):
     return str(val)
 
@@ -112,7 +116,7 @@ def is_type(val):
     if not isinstance(val, dict):
         return f"Tried to set unexpected type: {type(val)} to a move"
     if "type" in val:
-        if val["type"] not in ["Su", "Ex"]:
+        if val["type"] not in ["Su", "Ex", "Traits"]:
             return f"Unexpected move type: {val['type']}"
     else:
         return "Move is missing a type"
@@ -214,11 +218,16 @@ class SubSheet:
             raise TypeError(f"{key} is not an appendable key")
         self._values[key].append(result)
 
+    def items(self):
+        return self._values.items()
+
 
 NULLABLE_NUMBER = DataType(stringify, is_nullable_number)
+OPTIONAL_NULLABLE_NUMBER = DataType(stringify, is_nullable_number, default=empty_string)
 INTEGER = DataType(None, is_integer)
 SUBSHEET = DataType(None, is_subsheet)
 ARBITRARY_STRING = DataType(strip_whitespace, is_string)
+OPTIONAL_ARBITRARY_STRING = DataType(strip_whitespace, is_string, default=empty_string)
 
 ABILITIES_DATATYPES = {
     "str": NULLABLE_NUMBER,
@@ -252,13 +261,13 @@ CHARACTER_DATATYPES = {
     "size": DataType(strip_whitespace, valid_size),
     "type": ARBITRARY_STRING,
     "init": INTEGER,
-    "senses": ARBITRARY_STRING,
+    "senses": OPTIONAL_ARBITRARY_STRING,
     "attack": ARBITRARY_STRING,
     "fullAttack": ARBITRARY_STRING,
     "space": DataType(None, is_integer, default=default_space),
     "reach": DataType(None, is_integer, default=default_reach),
-    "bab": INTEGER,
-    "grapple": INTEGER,
+    "bab": OPTIONAL_NULLABLE_NUMBER,
+    "grapple": OPTIONAL_NULLABLE_NUMBER,
     "feats": ARBITRARY_STRING,
     "speed": ARBITRARY_STRING,  # Possibly multiple types of string
     "ac": SUBSHEET,
