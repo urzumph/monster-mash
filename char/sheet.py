@@ -221,6 +221,23 @@ class SubSheet:
     def items(self):
         return self._values.items()
 
+    def compare(self, target, res=""):
+        for k, v in self.items():
+            if isinstance(v, SubSheet):
+                # target[k] may exist as SubSheet
+                if k in target:
+                    res += f"Checking SubSheet with key {k} >\n"
+                    res = self[k].compare(target[k], res)
+                    res += "< Return from SubSheet Check\n"
+                else:
+                    res += f"Key {k} missing in target. Expected to be a SubSheet\n"
+            else:
+                if not k in target:
+                    res += f"Key {k} missing in target. Expected to be {v}\n"
+                elif target[k] != v:
+                    res += f"Key {k} expecting value {v} but got {target[k]}\n"
+        return res
+
 
 NULLABLE_NUMBER = DataType(stringify, is_nullable_number)
 OPTIONAL_NULLABLE_NUMBER = DataType(stringify, is_nullable_number, default=empty_string)

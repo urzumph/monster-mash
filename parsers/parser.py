@@ -76,9 +76,13 @@ class Parser:
             if m:
                 self._rematch = m
                 if self.accumulater:
-                    # When accumulating, we need the whole string even if the
+                    # When accumulating, we need to check if this match is single or multi-line.
+                    # In multiline, we need the whole string even if the
                     # match did not cover the whole line.
                     self.text = frag.string
+                    # In single-line, we need to remove everything after the end match
+                    if self.end_match(frag):
+                        self.text = self.text[0 : self._end_rematch.end()]
                 else:
                     self.text = m.group(0)
                 to_ret = True
@@ -143,10 +147,20 @@ class Parser:
         else:
             return False
 
+    def end_match(self, frag):
+        """Determine whether this fragment is matched by the ending regex
+        and return the result. No further action is taken.
+        As a special case, refuse to match the same exact text as both
+        a start and end match."""
+        self._end_rematch = self._end_regex.search(frag.string)
+        if self._end_rematch and self._end_rematch.group(0) == self._rematch.group(0):
+            return False
+        return self._end_rematch
+
     def accumulate(self, idx, frag):
         """Determine whether the passed fragment is the end of the accumulated
         text, and if not add it to the gathered text of this parser."""
-        self._end_rematch = self._end_regex.search(frag.string)
+        self.end_match(frag)
         result = False
         if self._end_rematch:
             result = True
@@ -202,6 +216,7 @@ class Document:
 
     def do_bam(self, parser, idx, accum_end):
         if not parser.bam:
+            logging.debug("Document.do_bam skipping bam for non-bam parser: %s", parser)
             return
         frag = self.frags[idx]
         remainder = parser.split(frag, accum_end)
@@ -255,12 +270,24 @@ class Document:
                         frag.string,
                     )
                     frag.register_match(parser.name)
+                    single_line_accum = False
                     if parser.accumulater:
-                        accum = True
-                        continue
-                    # print("non-accum actuate")
+                        em = parser.end_match(frag)
+                        logging.debug(
+                            "Document.single_pass single_line_accum check: %s",
+                            em,
+                        )
+                        if em:
+                            single_line_accum = True
+                        else:
+                            accum = True
+                            continue
+                    logging.debug(
+                        "Document.single_pass single line actuate starting for %s",
+                        parser,
+                    )
+                    self.do_bam(parser, idx, single_line_accum)
                     parser.actuate(charsheet)
-                    self.do_bam(parser, idx, False)
                     return idx
         else:
             if accum:

@@ -27,7 +27,12 @@ class TestCotsqParser(unittest.TestCase):
             logging.debug("Initiating parse of %s with %s", text, cotsq.parsers)
             doc.parse(cotsq.parsers, result)
             logging.debug("Test parse of %s complete", jt)
-            self.assertEqual(result, jres, f"Parsed:\n{result}\nParser results:\n{doc}")
+            reason = jres.compare(result)
+            self.assertEqual(
+                result,
+                jres,
+                f"Parsed:\n{result}\nParser results:\n{doc}\nComparison:\n{reason}",
+            )
         logging.debug("End Cotsq Parser test")
 
 

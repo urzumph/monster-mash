@@ -1,9 +1,14 @@
 from . import utils
+import re
 
-# Regular expression definitions
+# Regular expression reusable fragments
 NUMBER_OR_DASH = "[–—\-\d]"
 ALIGNMENT = "(?:[CNL][GNE])|N"
 BONUS_OR_DASH = "[+\-]?[\d\—]+"
+DIE_SET = "(\d+)d\d+[+-]?\d*"
+
+# Pre-defined regular expressions
+RE_SEMICOLON = re.compile(";")
 
 # Functions
 

@@ -5,17 +5,18 @@ from . import utils
 from . import shared
 
 # Chahir: Male human vampire Sor8; CR 10;
-name_re = re.compile("^([^:]+): (([^;]+\d); )?(CR \d+;)?")
+name_re = re.compile("^([^:]+): (([^;]+\d[^;]*); )?(CR \d+;)?")
 # Medium-size outsider (chaotic, evil);
 # Medium-size undead;
 type_re = re.compile(
     "^\s*(Fine|Diminutive|Tiny|Small|Medium|Large|Huge|Gargantuan|Colossal)(?:-size)?\s+([^;]+);"
 )
 # HD 10d8+10;
-# TODO: HD 3d8+9 plus 4d10+12;
-hd_re = re.compile("^\s*HD\s*(\d+)d\d+[+-]?\d*;")
+# HD 3d8+9 plus 4d10+12; #TODO: Fix HD count
+hd_re = re.compile(f"^\s*HD\s*{shared.DIE_SET}( plus {shared.DIE_SET})*;")
 # hp 66;
-hp_re = re.compile("^\s*hp\s*(\d+);")
+# hp 69, 62;
+hp_re = re.compile("^\s*hp\s*(\d+)[^;]*;")
 # Init +8;
 init_re = re.compile("^\s*Init\s*([+-]?\d+);")
 # Spd 30 ft.;
@@ -44,10 +45,10 @@ skill_note_re = re.compile("\s*\([^\)]*\)")
 feat_start_re = re.compile(";\s*")
 
 # Atk
-atk_re = re.compile("^\s*Atk ([^;]+);")
+atk_re = re.compile("^\s*Atk (?!Options)")
 
 # SA/SQ
-saq_re = re.compile("^\s*(S[AQ]) ")
+saq_re = re.compile("^\s*(S[AQ])\s")
 saq_end_re = re.compile(";")
 
 
@@ -91,9 +92,12 @@ def saf(charsheet, text, **kwargs):
     charsheet["feats"] = to_parse.rstrip(". ")
 
 
-def atk(charsheet, rematch, **kwargs):
-    charsheet["attack"] = rematch.group(1)
-    charsheet["fullAttack"] = rematch.group(1)
+def atk(charsheet, text, **kwargs):
+    txt = utils.prechomp_regex(text, atk_re)
+    txt = utils.undo_word_wrap(txt)
+    txt = txt.rstrip(";")
+    charsheet["attack"] = txt
+    charsheet["fullAttack"] = txt
 
 
 def saq(charsheet, text, rematch, **kwargs):
@@ -121,7 +125,15 @@ parsers = [
     parser.Parser("cotsq_init", init, regex=init_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_speed", speed, regex=speed_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_ac", shared.ac, regex=ac_re, bam=True, line_dewrap=True),
-    parser.Parser("cotsq_atk", atk, regex=atk_re, bam=True, line_dewrap=True),
+    parser.Parser(
+        "cotsq_atk",
+        atk,
+        regex=atk_re,
+        accumulate=True,
+        accum_end_regex=shared.RE_SEMICOLON,
+        accum_include_end=True,
+        bam=True,
+    ),
     parser.Parser(
         "cotsq_saq",
         saq,

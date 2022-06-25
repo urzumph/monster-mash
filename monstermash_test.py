@@ -21,7 +21,12 @@ class TestMonsterMash(unittest.TestCase):
             jres = char.Sheet()
             jres.from_json(jt)
             result = monstermash.parse(tarr)
-            self.assertEqual(result, jres)
+            reason = jres.compare(result)
+            self.assertEqual(
+                result,
+                jres,
+                f"Failure in test {t}:\nParsed:\n{result}\nComparison:\n{reason}",
+            )
 
 
 if __name__ == "__main__":

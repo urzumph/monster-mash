@@ -206,6 +206,30 @@ class TestParser(unittest.TestCase):
         )
         self.assertEqual(self.call_count(), 1)
 
+    def test_parser_accum_one_line(self):
+        doc = parser.Document(["678;a", "bcd"])
+        matcher = re.compile("\d+")
+        end_matcher = re.compile(";")
+        pobj = parser.Parser(
+            self.id(),
+            self.expect("678;"),
+            regex=matcher,
+            accumulate=True,
+            accum_end_regex=end_matcher,
+            accum_include_end=True,
+            bam=True,
+        )
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "678;", "matched": True, "matcher": self.id()},
+                {"string": "a", "matched": False, "matcher": None},
+                {"string": "bcd", "matched": False, "matcher": None},
+            ],
+        )
+        self.assertEqual(self.call_count(), 1)
+
     def test_parser_multi_logic(self):
         hit_re = re.compile("^012")
         miss_re = re.compile("[abc]+")
