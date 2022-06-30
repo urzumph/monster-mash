@@ -14,20 +14,28 @@ class ParserTest(unittest.TestCase):
     name = "ParentClass_DoNotInstanciate"
     parsers = []
     tests = []
+    genericParserFunction = None
 
     def test_parser(self):
         logging.debug(f"Starting {self.name} Parser Test")
         for t in self.tests:
             text = pathlib.Path("tests/" + t + ".txt").read_text()
             tarr = text.split("\n")
-            doc = parser.Document(tarr)
             jt = pathlib.Path("tests/" + t + ".json").read_text()
             jres = char.Sheet()
             jres.from_json(jt)
-            result = char.Sheet()
-            logging.debug("Initiating parse of %s with %s", text, self.parsers)
-            doc.parse(self.parsers, result)
-            logging.debug("Test parse of %s complete", jt)
+            if self.genericParserFunction is not None:
+                doc = "Unavailable (Generic Test)"
+                logging.debug("Initiating parse of %s with genericParserFunction", text)
+                result = self.genericParserFunction(tarr)
+                logging.debug("Test parse of %s complete", jt)
+            else:
+                doc = parser.Document(tarr)
+                result = char.Sheet()
+                logging.debug("Initiating parse of %s with %s", text, self.parsers)
+                doc.parse(self.parsers, result)
+                logging.debug("Test parse of %s complete", jt)
+
             reason = jres.compare(result)
             self.assertEqual(
                 result,
