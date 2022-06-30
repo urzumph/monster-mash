@@ -16,3 +16,6 @@ python -m unittest parsers.parser_test.TestParser.test_parser_bam
 ## Usage
 
 Run chromium with `chromium --remote-debugging-port=9222 --user-data-dir=remote-profile‘
+Save the text in input.txt then run like this:
+
+timeout 5m python monstermash.py < ../input.txt

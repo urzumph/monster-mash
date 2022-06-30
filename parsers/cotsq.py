@@ -5,7 +5,7 @@ from . import utils
 from . import shared
 
 # Chahir: Male human vampire Sor8; CR 10;
-name_re = re.compile("^([^:]+): (([^;]+\d[^;]*); )?(CR \d+;)?")
+name_re = re.compile("^([^:]+): (([^;]+\d[^;]*); )?(CR [^;]+;)?")
 # Medium-size outsider (chaotic, evil);
 # Medium-size undead;
 type_re = re.compile(
@@ -23,7 +23,7 @@ init_re = re.compile("^\s*Init\s*([+-]?\d+);")
 speed_re = re.compile("^\s*Spd\s*([^;]+);")
 # AC 23, touch 15, flat-footed 19;
 ac_re = re.compile(
-    f"^\s*AC\s*({shared.NUMBER_OR_DASH}+),\s*touch\s*({shared.NUMBER_OR_DASH}+),\s*flat-footed\s*({shared.NUMBER_OR_DASH}+)[^;]*;"
+    f"^\s*AC\s*({shared.NUMBER_OR_DASH}+),\s*touch\s*({shared.NUMBER_OR_DASH}+),\s*flat-\s*footed\s*({shared.NUMBER_OR_DASH}+)[^;]*;"
 )
 
 # AL CE; SV Fort +3, Ref +9, Will +11;

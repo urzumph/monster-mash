@@ -7,6 +7,9 @@ import char
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+
+chrome_service = Service("/snap/bin/chromium.chromedriver")
 
 MODES = [parsers.etum_mode, parsers.cotsq_mode]
 
@@ -31,8 +34,8 @@ if __name__ == "__main__":
     chrome_options = webdriver.chrome.options.Options()
     chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
     # Change chrome driver path accordingly
-    chrome_driver = "/snap/bin/chromium.chromedriver"
-    driver = webdriver.Chrome(chrome_driver, chrome_options=chrome_options)
+    # chrome_driver = "/snap/bin/chromium.chromedriver"
+    driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
 
 
 def iframe_switch():
@@ -145,19 +148,13 @@ def send_to_browser(details):
     set_val("attr_npccombatdescr", combatdesc)
 
 
-# TODO "size": "Large",
-
 if __name__ == "__main__":
     print("Connected to: ", driver.title)
     accumulated = []
     for line in sys.stdin:
-        if line.rstrip().upper() == "EXIT":
-            sys.exit(0)
-        elif line.rstrip().upper() == "END":
-            current = parse(accumulated)
-            print(current)
-            send_to_browser(current)
-            print("Send to browser complete")
-            accumulated = []
-        else:
-            accumulated.append(line)
+        accumulated.append(line)
+
+    current = parse(accumulated)
+    print(current)
+    send_to_browser(current)
+    print("Send to browser complete")
