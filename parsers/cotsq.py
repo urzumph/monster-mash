@@ -52,10 +52,6 @@ saq_re = re.compile("^\s*(S[AQ])\s")
 saq_end_re = re.compile(";")
 
 
-def name(charsheet, rematch, **kwargs):
-    charsheet["name"] = rematch.group(1)
-
-
 def mtype(charsheet, rematch, **kwargs):
     charsheet["type"] = rematch.group(2)
     charsheet["size"] = rematch.group(1)
@@ -67,18 +63,6 @@ def hd(charsheet, rematch, **kwargs):
 
 def hp(charsheet, rematch, **kwargs):
     charsheet["hp"] = int(rematch.group(1))
-
-
-def init(charsheet, rematch, **kwargs):
-    charsheet["init"] = rematch.group(1)
-
-
-def speed(charsheet, rematch, **kwargs):
-    charsheet["speed"] = rematch.group(1)
-
-
-def alignment(charsheet, rematch, **kwargs):
-    charsheet["alignment"] = rematch.group(1)
 
 
 def saf(charsheet, text, **kwargs):
@@ -118,12 +102,22 @@ def moves(charsheet, text, rematch, **kwargs):
 
 
 parsers = [
-    parser.Parser("cotsq_name", name, index=0, regex=name_re, bam=True),
+    parser.Parser(
+        "cotsq_name", shared.re_first("name"), index=0, regex=name_re, bam=True
+    ),
     parser.Parser("cotsq_type", mtype, regex=type_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_hd", hd, regex=hd_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_hp", hp, regex=hp_re, bam=True, line_dewrap=True),
-    parser.Parser("cotsq_init", init, regex=init_re, bam=True, line_dewrap=True),
-    parser.Parser("cotsq_speed", speed, regex=speed_re, bam=True, line_dewrap=True),
+    parser.Parser(
+        "cotsq_init", shared.re_first("init"), regex=init_re, bam=True, line_dewrap=True
+    ),
+    parser.Parser(
+        "cotsq_speed",
+        shared.re_first("speed"),
+        regex=speed_re,
+        bam=True,
+        line_dewrap=True,
+    ),
     parser.Parser("cotsq_ac", shared.ac, regex=ac_re, bam=True, line_dewrap=True),
     parser.Parser(
         "cotsq_atk",
@@ -144,7 +138,11 @@ parsers = [
         bam=True,
     ),
     parser.Parser(
-        "cotsq_alignment", alignment, regex=alignment_re, bam=True, line_dewrap=True
+        "cotsq_alignment",
+        shared.re_first("alignment"),
+        regex=alignment_re,
+        bam=True,
+        line_dewrap=True,
     ),
     parser.Parser(
         "cotsq_saves", shared.saves, regex=saves_re, bam=True, line_dewrap=True

@@ -51,18 +51,10 @@ def hp(charsheet, rematch, **kwargs):
 dr_re = re.compile("[;,\s]*(DR \d+/.*)$")
 
 
-def dr(charsheet, rematch, **kwargs):
-    charsheet["sq"] = rematch.group(1)
-
-
 def mtype(charsheet, rematch, **kwargs):
     charsheet["alignment"] = rematch.group(1)
     charsheet["size"] = rematch.group(2)
     charsheet["type"] = rematch.group(3).strip()
-
-
-def init(charsheet, rematch, **kwargs):
-    charsheet["init"] = rematch.group(1)
 
 
 def senses(charsheet, text, **kwargs):
@@ -117,9 +109,9 @@ def special(charsheet, text, rematch, **kwargs):
 parsers = [
     parser.Parser("etum_name", name, index=0),
     parser.Parser("etum_hp", hp, regex=hp_re, bam=True),
-    parser.Parser("etum_dr", dr, regex=dr_re),
+    parser.Parser("etum_dr", shared.re_first("sq"), regex=dr_re),
     parser.Parser("etum_type", mtype, regex=mtype_re),
-    parser.Parser("etum_init", init, regex=init_re, bam=True),
+    parser.Parser("etum_init", shared.re_first("init"), regex=init_re, bam=True),
     parser.Parser(
         "etum_senses",
         senses,
