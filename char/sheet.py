@@ -116,7 +116,7 @@ def is_type(val):
     if not isinstance(val, dict):
         return f"Tried to set unexpected type: {type(val)} to a move"
     if "type" in val:
-        if val["type"] not in ["Su", "Ex", "Traits"]:
+        if val["type"] not in ["Su", "Ex", "Traits", "Misc"]:
             return f"Unexpected move type: {val['type']}"
     else:
         return "Move is missing a type"
@@ -233,9 +233,14 @@ class SubSheet:
                     res += f"Key {k} missing in target. Expected to be a SubSheet\n"
             else:
                 if not k in target:
-                    res += f"Key {k} missing in target. Expected to be {v}\n"
+                    res += f"Key {k} missing in rhs. Expected to be {v}\n"
                 elif target[k] != v:
-                    res += f"Key {k} expecting value {v} but got {target[k]}\n"
+                    res += f"Key {k} got lhs value {v} != rhs {target[k]}\n"
+        for k, v in target.items():
+            if not k in self._values:
+                res += (
+                    f"Key {k} exists in rhs, but missing in lhs. Expected value: {v}\n"
+                )
         return res
 
 

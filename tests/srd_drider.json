@@ -1,0 +1,62 @@
+{
+"name":"Drider",
+"type": "Aberration",
+"size": "Large",
+"space": "10",
+"reach": "5",
+"bab": 4,
+"grapple": 10,
+"hd": 6,
+"hp": 45,
+"init": "+2",
+"speed": "30 ft., climb 15 ft.",
+"ac": {
+    "base": "17",
+    "touch": "11",
+    "flat": "15"
+    },
+"saves": {
+    "fort": "+5",
+    "ref": "+4",
+    "will": "+8"
+    },
+"alignment": "CE",
+"abilities": {
+    "str": 15,
+    "dex": 15,
+    "con": 16,
+    "int": 15,
+    "wis": 16,
+    "cha": 16
+    },
+"skills": {
+    "Climb": "+14",
+    "Concentration": "+9",
+    "Hide": "+10",
+    "Listen": "+9",
+    "Move Silently": "+12",
+    "Spot": "+9"
+    },
+"feats": "Combat Casting, Two-Weapon Fighting, Weapon Focus (bite)",
+"attack": "Dagger +5 melee (1d6+2/19-20) or bite +6 melee (1d4+1 plus poison) or shortbow +5 ranged (1d8/×3)",
+"fullAttack": "2 daggers +3 melee (1d6+2/19-20, 1d6+1/19-20) and bite +1 melee (1d4+1 plus poison); or shortbow +5 ranged (1d8/×3)",
+"sa": "Spells, spell-like abilities, poison",
+"sq": "Darkvision 60 ft., spell resistance 17",
+"moves": {
+    "Poison":{
+        "name": "Poison",
+        "type": "Ex",
+        "desc": "Injury, Fortitude DC 16, initial and secondary damage 1d6 Str. The save DC is Constitution based."
+        },
+    "Spell-Like Abilities":{
+        "name": "Spell-Like Abilities",
+        "type": "Misc",
+        "desc": "1/day—dancing lights (DC 13), clairaudience/clairvoyance, darkness, detect good, detect law, detect magic, dispel magic, faerie fire, levitate, suggestion (DC 16). Caster level 6th. The save DCs are Charisma-based."
+        },
+    "Spells":{
+        "name": "Spells",
+        "type": "Misc",
+        "desc": "Driders cast spells as 6th-level clerics, wizards, or sorcerers. Drider clerics can choose from the following domains: Chaos, Destruction, Evil, and Trickery. The typical spells prepared shown here are for a drider sorcerer. Typical Sorcerer Spells Known (6/7/6/4, base save DC 13 + spell level) 0—daze, detect magic, ghost sound, mage hand, ray of frost, read magic, resistance; 1st—mage armor, magic missile, ray of enfeeblement, silent image; 2nd— invisibility, web; 3rd—lightning bolt. Skills A drider has a +4 racial bonus on Hide and Move Silently checks. It has a +8 racial bonus on Climb checks and can always choose to take 10 on a Climb check, even if rushed or threatened."
+        }
+    }
+}

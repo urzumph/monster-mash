@@ -13,8 +13,6 @@ senses_accum_end_re = re.compile("^(Languages|AC)")
 lang_re = re.compile("^Languages ")
 # Skills Intimidate +3, Listen +11, Search +4, Spot +11
 skills_re = re.compile("^\s*Skills (.*)")
-# Listen +11, Spot +11
-skill_split_re = re.compile("^\s*(\w+) ([+\-]\d+)[,;]?\s*")
 # Melee mwk greataxe +11/+6 (3d6+7/×3) and
 # gore +5 (1d8+3)
 # Space 10 ft.; Reach 10 ft.
@@ -28,12 +26,6 @@ feats_re = re.compile("^\s*Feats ")
 special_re = re.compile("^(.+?) \((Su|Ex)\) ")
 # Base Atk +6; Grp +15
 bab_re = re.compile(f"^\s*Base Atk [+]?([\-\d]+); Grp [+]?({shared.NUMBER_OR_DASH}+)")
-
-# Used in multiple places, so adding to the start
-def inner_skills(charsheet, text, **kwargs):
-    rxi = utils.RegexIter(text, skill_split_re)
-    for m in iter(rxi):
-        charsheet["skills"][m.group(1)] = m.group(2)
 
 
 # Ster Longhorn, Minotaur Chief
@@ -77,7 +69,9 @@ def senses(charsheet, text, **kwargs):
     text = utils.prechomp_regex(text, senses_re)
     senses, remainder = utils.split_from(text, senses_end_re)
     charsheet["senses"] = senses.rstrip(", ")
-    inner_skills(charsheet, remainder.replace("\n", " "))
+    remainder = remainder.lstrip("; ")
+    remainder = remainder.replace("\n", " ")
+    shared.inner_skills(charsheet, remainder)
 
 
 # AC 19, touch 13, flat-footed —; natural cunning
@@ -96,16 +90,6 @@ def attack(charsheet, text, **kwargs):
     charsheet["fullAttack"] = text
 
 
-def space(charsheet, rematch, **kwargs):
-    charsheet["space"] = rematch.group(1)
-    charsheet["reach"] = rematch.group(2)
-
-
-def bab(charsheet, rematch, **kwargs):
-    charsheet["bab"] = utils.maybe_int(rematch.group(1))
-    charsheet["grapple"] = utils.maybe_int(rematch.group(2))
-
-
 # Abilities Str 21, Dex 10, Con 15, Int 10, Wis 10, Cha 8
 abilities_re = re.compile(
     f"^\s*Abilities Str ({shared.NUMBER_OR_DASH}+), Dex ({shared.NUMBER_OR_DASH}+), Con ({shared.NUMBER_OR_DASH}+), Int ({shared.NUMBER_OR_DASH}+), Wis ({shared.NUMBER_OR_DASH}+), Cha ({shared.NUMBER_OR_DASH}+)"
@@ -117,17 +101,8 @@ def feats(charsheet, text, **kwargs):
     charsheet["feats"] = text
 
 
-def skills(charsheet, rematch, **kwargs):
-    inner_skills(charsheet, rematch.group(1))
-
-
 # Speed 30 ft. (6 squares)
 speed_re = re.compile("^\s*Speed (.*)")
-squares_re = re.compile("\s*\(\d+ squares\)")
-
-
-def speed(charsheet, rematch, **kwargs):
-    charsheet["speed"] = squares_re.sub("", rematch.group(1))
 
 
 def special(charsheet, text, rematch, **kwargs):
@@ -161,8 +136,8 @@ parsers = [
         accumulate=True,
         accum_end_regex=space_re,
     ),
-    parser.Parser("etum_space", space, regex=space_re),
-    parser.Parser("etum_bab", bab, regex=bab_re),
+    parser.Parser("etum_space", shared.space, regex=space_re),
+    parser.Parser("etum_bab", shared.bab, regex=bab_re),
     parser.Parser("etum_abilities", shared.abilities, regex=abilities_re),
     parser.Parser(
         "etum_feats",
@@ -171,8 +146,8 @@ parsers = [
         accumulate=True,
         accum_end_regex=skills_re,
     ),
-    parser.Parser("etum_skills", skills, regex=skills_re),
-    parser.Parser("etum_speed", speed, regex=speed_re),
+    parser.Parser("etum_skills", shared.skills, regex=skills_re),
+    parser.Parser("etum_speed", shared.speed, regex=speed_re),
     parser.Parser(
         "etum_special",
         special,
