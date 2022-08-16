@@ -1,4 +1,12 @@
 import json
+import re
+
+
+def retouch_dashes(val):
+    if isinstance(val, str):
+        return re.sub("[–—]", "-", val)
+    else:
+        return val
 
 
 def strip_whitespace(val):
@@ -17,7 +25,7 @@ def is_integer(val):
         return None
     else:
         try:
-            parsed = int(val)
+            parsed = int(retouch_dashes(val))
         except:
             return f"'{val}' failed to parse as an integer"
     return None
@@ -133,10 +141,11 @@ def is_type(val):
 
 
 class DataType:
-    def __init__(self, retoucher, validator, default=None):
+    def __init__(self, retoucher, validator, default=None, mandatory=True):
         self._retoucher = retoucher
         self._validator = validator
         self._default = default
+        self.mandatory = mandatory
 
     def retouch(self, val):
         if self._retoucher is None:
@@ -243,13 +252,36 @@ class SubSheet:
                 )
         return res
 
+    def is_complete(self):
+        for key, dt in self._dts.items():
+            if not dt.mandatory:
+                continue
+            if key == "*":
+                continue
+            try:
+                val = self.__getitem__(key)
+                if not val:
+                    print(f"{key} was falsey, sheet not complete")
+                    return False  # Not truthy
+                elif isinstance(val, SubSheet):
+                    if not val.is_complete():
+                        return False
+            except KeyError:
+                print(f"{key} was missing, sheet not complete")
+                return False
+        return True
+
 
 NULLABLE_NUMBER = DataType(stringify, is_nullable_number)
-OPTIONAL_NULLABLE_NUMBER = DataType(stringify, is_nullable_number, default=empty_string)
-INTEGER = DataType(None, is_integer)
+OPTIONAL_NULLABLE_NUMBER = DataType(
+    stringify, is_nullable_number, default=empty_string, mandatory=False
+)
+INTEGER = DataType(retouch_dashes, is_integer)
 SUBSHEET = DataType(None, is_subsheet)
 ARBITRARY_STRING = DataType(strip_whitespace, is_string)
-OPTIONAL_ARBITRARY_STRING = DataType(strip_whitespace, is_string, default=empty_string)
+OPTIONAL_ARBITRARY_STRING = DataType(
+    strip_whitespace, is_string, default=empty_string, mandatory=False
+)
 
 ABILITIES_DATATYPES = {
     "str": NULLABLE_NUMBER,
@@ -290,15 +322,15 @@ CHARACTER_DATATYPES = {
     "reach": DataType(None, is_integer, default=default_reach),
     "bab": OPTIONAL_NULLABLE_NUMBER,
     "grapple": OPTIONAL_NULLABLE_NUMBER,
-    "feats": ARBITRARY_STRING,
+    "feats": OPTIONAL_ARBITRARY_STRING,
     "speed": ARBITRARY_STRING,  # Possibly multiple types of string
     "ac": SUBSHEET,
     "skills": SUBSHEET,
     "saves": SUBSHEET,
     "abilities": SUBSHEET,
     "moves": SUBSHEET,
-    "sa": ARBITRARY_STRING,
-    "sq": ARBITRARY_STRING,
+    "sa": OPTIONAL_ARBITRARY_STRING,
+    "sq": OPTIONAL_ARBITRARY_STRING,
 }
 
 

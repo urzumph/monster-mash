@@ -11,6 +11,8 @@ name_re = re.compile("^([^:]+): (([^;]+\d[^;]*); )?(CR [^;]+;)?")
 type_re = re.compile(
     "^\s*(Fine|Diminutive|Tiny|Small|Medium|Large|Huge|Gargantuan|Colossal)(?:-size)?\s+([^;]+);"
 )
+# CR 11;
+cr_re = re.compile("^\s*CR\s*(\d+)[^;]*;")
 # HD 10d8+10;
 # HD 3d8+9 plus 4d10+12; #TODO: Fix HD count
 hd_re = re.compile(f"^\s*HD\s*{shared.DIE_SET}( plus {shared.DIE_SET})*;")
@@ -18,13 +20,16 @@ hd_re = re.compile(f"^\s*HD\s*{shared.DIE_SET}( plus {shared.DIE_SET})*;")
 # hp 69, 62;
 hp_re = re.compile("^\s*hp\s*(\d+)[^;]*;")
 # Init +8;
-init_re = re.compile("^\s*Init\s*([+-]?\d+);")
+init_re = re.compile(f"^\s*Init\s*({shared.BONUS_OR_DASH});")
 # Spd 30 ft.;
 speed_re = re.compile("^\s*Spd\s*([^;]+);")
 # AC 23, touch 15, flat-footed 19;
 ac_re = re.compile(
     f"^\s*AC\s*({shared.NUMBER_OR_DASH}+),\s*touch\s*({shared.NUMBER_OR_DASH}+),\s*flat-\s*footed\s*({shared.NUMBER_OR_DASH}+)[^;]*;"
 )
+
+# Face/Reach 20 ft. by 20 ft./10 ft.;
+space_re = re.compile("^\s*Face/Reach\s*(\d+)\s+ft\.\s+by\s+(\d+)\s+ft\./(\d+)\s+ft\.;")
 
 # AL CE; SV Fort +3, Ref +9, Will +11;
 alignment_re = re.compile(f"^\s*AL\s*({shared.ALIGNMENT});")
@@ -33,7 +38,7 @@ saves_re = re.compile(
 )
 # Str 14, Dex 18, Con —, Int 10, Wis 14, Cha 22.
 abilities_re = re.compile(
-    f"^\s*Str\s+({shared.NUMBER_OR_DASH}+),\s+Dex ({shared.NUMBER_OR_DASH}+),\s+Con ({shared.NUMBER_OR_DASH}+),\s+Int ({shared.NUMBER_OR_DASH}+),\s+Wis ({shared.NUMBER_OR_DASH}+),\s+Cha ({shared.NUMBER_OR_DASH}+)[\.;]"
+    f"^\s*Str\s+({shared.NUMBER_OR_DASH}+),\s+Dex\s+({shared.NUMBER_OR_DASH}+),\s+Con\s+({shared.NUMBER_OR_DASH}+),\s+Int\s+({shared.NUMBER_OR_DASH}+),\s+Wis ({shared.NUMBER_OR_DASH}+),\s+Cha\s+({shared.NUMBER_OR_DASH}+)[\.;]"
 )
 moves_re = re.compile("^(.+?) \(?(Su|Ex|Traits)\)?:")
 
@@ -45,11 +50,13 @@ skill_note_re = re.compile("\s*\([^\)]*\)")
 feat_start_re = re.compile(";\s*")
 
 # Atk
-atk_re = re.compile("^\s*Atk (?!Options)")
+atk_re = re.compile("^\s*Atk\s(?!Options)")
 
 # SA/SQ
 saq_re = re.compile("^\s*(S[AQ])\s")
 saq_end_re = re.compile(";")
+# SR
+sr_re = re.compile("^\s*SR\s*(\d+);")
 
 
 def mtype(charsheet, rematch, **kwargs):
@@ -63,6 +70,13 @@ def hd(charsheet, rematch, **kwargs):
 
 def hp(charsheet, rematch, **kwargs):
     charsheet["hp"] = int(rematch.group(1))
+
+
+def space(charsheet, rematch, **kwargs):
+    first = int(rematch.group(1))
+    second = int(rematch.group(2))
+    charsheet["space"] = max(first, second)
+    charsheet["reach"] = rematch.group(3)
 
 
 def saf(charsheet, text, **kwargs):
@@ -92,6 +106,12 @@ def saq(charsheet, text, rematch, **kwargs):
     charsheet[index] = fixed
 
 
+def sr(charsheet, rematch, **kwargs):
+    val = rematch.group(1).lower()
+    existing = charsheet["sq"]
+    charsheet["sq"] = existing + f" SR {val};"
+
+
 def moves(charsheet, text, rematch, **kwargs):
     mname = rematch.group(1)
     move = {"name": mname, "type": rematch.group(2)}
@@ -105,6 +125,7 @@ parsers = [
     parser.Parser(
         "cotsq_name", shared.re_first("name"), index=0, regex=name_re, bam=True
     ),
+    parser.Parser("cotsq_cr", shared.discard, regex=cr_re, bam=True),
     parser.Parser("cotsq_type", mtype, regex=type_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_hd", hd, regex=hd_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_hp", hp, regex=hp_re, bam=True, line_dewrap=True),
@@ -119,6 +140,7 @@ parsers = [
         line_dewrap=True,
     ),
     parser.Parser("cotsq_ac", shared.ac, regex=ac_re, bam=True, line_dewrap=True),
+    parser.Parser("cotsq_space", space, regex=space_re, bam=True, line_dewrap=True),
     parser.Parser(
         "cotsq_atk",
         atk,
@@ -137,6 +159,7 @@ parsers = [
         accum_include_end=True,
         bam=True,
     ),
+    parser.Parser("cotsq_sr", sr, regex=sr_re, bam=True, line_dewrap=True),
     parser.Parser(
         "cotsq_alignment",
         shared.re_first("alignment"),

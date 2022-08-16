@@ -26,7 +26,16 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result, "post")
         r = re.compile("potato")
         result = utils.prechomp_regex(s, r)
-        self.assertEqual(result, "pre post")
+        self.assertEqual(result, s)
+
+    def test_postchomp_regex(self):
+        s = "pre post"
+        r = re.compile(" post\s*$")
+        result = utils.postchomp_regex(s, r)
+        self.assertEqual(result, "pre")
+        r = re.compile(" potato\s*$")
+        result = utils.prechomp_regex(s, r)
+        self.assertEqual(result, s)
 
     def test_split_from(self):
         s = "pre post"

@@ -1,11 +1,12 @@
 from . import utils
+import logging
 import re
 
 # Regular expression reusable fragments
-NUMBER_OR_DASH = "[–—\-\d]"
+NUMBER_OR_DASH = "[–—\-\dØ]"
 ALIGNMENT = "(?:[CNL][GNE])|N"
-BONUS_OR_DASH = "[+\-]?[\d\—]+"
-DIE_SET = "(\d+)d\d+[+-]?\d*"
+BONUS_OR_DASH = "[\+\-]?[\d\—Ø]+"
+DIE_SET = "(\d+)d\d+[+-–]?\d*"
 SKILL_SPLIT = re.compile("^\s*(.+?)\s*([+\-]\d+)[,;]?\s*")
 SQUARES = re.compile("\s*\(\d+ squares\)")
 
@@ -65,3 +66,7 @@ def skills(charsheet, rematch, **kwargs):
 
 def speed(charsheet, rematch, **kwargs):
     charsheet["speed"] = SQUARES.sub("", rematch.group(1))
+
+
+def discard(charsheet, text, **kwargs):
+    logging.debug("shared.discard: discarding '%s'", text)

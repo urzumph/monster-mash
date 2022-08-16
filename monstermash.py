@@ -22,7 +22,11 @@ def parse(intext):
         result = char.Sheet()
         doc = parsers.Document(intext)
         doc.parse(m, result)
+        if not result.is_complete():
+            print(f"parse: mode {m} created incomplete result, skipping\n")
+            continue
         score = doc.score()
+        print(f"parse: mode {m} score {score}")
         if score > best_score:
             best_result = result
             best_score = score
@@ -156,5 +160,8 @@ if __name__ == "__main__":
 
     current = parse(accumulated)
     print(current)
-    send_to_browser(current)
-    print("Send to browser complete")
+    if current != None:
+        send_to_browser(current)
+        print("Send to browser complete")
+    else:
+        print("Parsing failed: no matching parser")

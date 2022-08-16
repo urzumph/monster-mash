@@ -312,4 +312,4 @@ class Document:
                 else:
                     start = None
             if not matched:
-                print(f"Warning: No text matched parser {parser.name}")
+                logging.debug("Warning: No text matched parser %s", parser.name)

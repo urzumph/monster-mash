@@ -34,6 +34,14 @@ def prechomp_regex(string, regex):
         return string[len(m.group(0)) :]
 
 
+def postchomp_regex(string, regex):
+    m = regex.search(string)
+    if not m:
+        return string
+    else:
+        return string[: -len(m.group(0))]
+
+
 def split_from(string, regex):
     m = regex.search(string)
     if m:
@@ -44,8 +52,12 @@ def split_from(string, regex):
 
 def maybe_int(text):
     toret = text
+    toparse = text
+    if isinstance(toparse, str):
+        toparse = re.sub("[–—]", "-", toparse)
+        toparse = toparse.replace("Ø", "0")
     try:
-        toret = int(text)
+        toret = int(toparse)
     except ValueError:
         pass
     return toret
