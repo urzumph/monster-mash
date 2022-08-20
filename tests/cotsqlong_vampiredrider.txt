@@ -1,0 +1,109 @@
+Drider Vampire
+Large Undead
+Hit Dice: 6d12 (39 hp)
+Initiative: +8
+Speed: 30 ft., climb 15 ft.
+AC: 25 (–1 size, +4 Dex, +12 natural), touch 13, flat-footed
+21
+Attacks: 2 claws +7 melee and bite +5 melee
+Damage: Claw 1d8+5 plus energy drain, bite 1d6+2
+Face/Reach: 10 ft. by 10 ft./5 ft.
+Special Attacks: Attach, blood drain, energy drain, spell-like
+abilities, spells, spider mastery
+Special Qualities: Alternate form, cold resistance 20, DR
+15/+1, electricity resistance 20, fast healing 5, gaseous
+form, SR 19, turn resistance +4
+Saves: Fort +2, Ref +8, Will +9
+Abilities: Str 21, Dex 19, Con —, Int 17, Wis 18, Cha 20
+Skills: Bluff +13, Climb +17, Concentration +7, Hide +18,
+Listen +20, Move Silently +22, Search +11, Sense Motive
++12, Spellcraft +12, Spot +23
+Feats: Alertness, Ambidexterity, Combat Casting, Combat
+Reflexes, Dodge, Improved Initiative, Lightning
+Reflexes, Mobility, Multiattack
+Climate/Terrain: Underground
+Organization: Solitary
+Challenge Rating: 9
+Treasure: Double standard
+Alignment: Always chaotic evil
+Advancement: By character class
+
+These undead abominations are
+creatures of pure hatred and
+malice, filled with loathing for
+everything that lives. Though a
+drider vampire drinks blood and has
+other abilities that resemble those of
+a common humanoid vampire, the
+two are actually quite different crea-
+tures.
+A drider vampire looks much as
+it did in life, with the head and torso
+of a drow and the lower body of a giant
+spider. Its hands are wickedly clawed, and
+from its mouth protrude huge fangs like
+those of a venomous spider.
+
+Combat
+A drider vampire’s abilities are a mixture of re-
+tained drider traits and special qualities similar
+Drider Vampire
+to those of a common vampire. Unlike hu-
+manoid vampires, the drider vampire has a dan-
+gerous bite attack and can easily drain blood from a victim
+without resorting to grappling. A successful hit from one of
+its clawed hand drains life energy like a vampire’s slam
+attack.
+
+Attach (Ex): If a drider vampire hits with its bite attack, it
+latches onto the opponent’s body and begins draining blood the
+same round. An attached drider vampire’s AC is 21.
+Blood Drain (Ex): A drider vampire drains blood, dealing
+1d4 points of Constitution drain immediately upon attaching
+to its opponent. Each round thereafter that it remains at-
+tached, it automatically deals an additional 1d4 points of Con-
+stitution drain.
+
+Energy Drain (Su): Any living creature hit by a drider vam-
+pire’s claw attack must succeed at a Fortitude saving throw
+(DC 18) or gain one negative level. For each negative level be-
+stowed, the drider vampire heals 5 points of damage. If the
+amount of healing is more than the damage the creature has
+taken, it gains any excess as temporary hit points. If the nega-
+tive level has not been removed (with a spell such as restora-
+tion) before 24 hours have passed, the afflicted opponent must
+succeed at a Fortitude save (DC 18) to remove it. Failure
+means the opponent’s level (or Hit Dice) is reduced by one.
+Spell-Like Abilities: 1/day—dancing lights, darkness, detect
+chaos, detect evil, detect good, detect law, detect magic, faerie
+fire, levitate. Caster level 6th; save DC 15 + spell level.
+Spells: A drider vampire retains all the spellcasting abilities
+it had in life. Most driders are 6th-level clerics, wizards, or
+sorcerers. Drider vampire clerics usually worship Kiaransalee
+(even though they served Lolth in life), and they choose their
+domains from Chaos, Drow, Evil, Retribution, and Undeath.
+
+Spider Mastery (Su): A drider vampire can compel a spi-
+derkind creature (see Spiderkind sidebar) to obey its mental com-
+mands. An unwilling, intelligent target that fails a Will saving
+throw (DC 18) obeys one command as if under a suggestion spell.
+A successful save allows the creature to
+resist the command, but the
+drider vampire can at-
+tempt to command it
+again next round. Command-
+ing an unwilling target requires a
+standard action; otherwise, issuing
+commands is a free action.
+Alternate Form (Su): A drider vampire
+can assume the shape of a monstrous
+spider of any size from Tiny to Large
+as a standard action. This ability func-
+tions like a polymorph self spell (caster
+level 12th). The creature can remain in
+spider form until it chooses to revert
+to its natural form or until the next
+sunrise.
+Skills: A drider vampire gains skills as an aberration. It re-
+ceives a +8 racial bonus on Bluff, Hide, Listen, Move Silently,
+Search, Sense Motive, and Spot checks.

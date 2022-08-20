@@ -134,7 +134,7 @@ parsers = [
     parser.Parser("srd_hphd", hphd, regex=hphd_re),
     parser.Parser("srd_init", shared.re_first("init"), regex=init_re),
     parser.Parser("srd_speed", shared.speed, regex=speed_re),
-    parser.Parser("srd_ac", shared.ac, regex=ac_re),
+    parser.Parser("srd_ac", shared.ac, regex=ac_re, line_dewrap=True),
     parser.Parser("srd_bab", shared.bab, regex=bab_re),
     parser.Parser("srd_atk", shared.re_first("attack"), regex=atk_re),
     parser.Parser("srd_full_atk", shared.re_first("fullAttack"), regex=full_atk_re),

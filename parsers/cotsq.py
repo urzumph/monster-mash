@@ -72,13 +72,6 @@ def hp(charsheet, rematch, **kwargs):
     charsheet["hp"] = int(rematch.group(1))
 
 
-def space(charsheet, rematch, **kwargs):
-    first = int(rematch.group(1))
-    second = int(rematch.group(2))
-    charsheet["space"] = max(first, second)
-    charsheet["reach"] = rematch.group(3)
-
-
 def saf(charsheet, text, **kwargs):
     to_parse = utils.prechomp_regex(text, saf_re)
     to_parse = utils.undo_word_wrap(to_parse)
@@ -140,7 +133,9 @@ parsers = [
         line_dewrap=True,
     ),
     parser.Parser("cotsq_ac", shared.ac, regex=ac_re, bam=True, line_dewrap=True),
-    parser.Parser("cotsq_space", space, regex=space_re, bam=True, line_dewrap=True),
+    parser.Parser(
+        "cotsq_space", shared.cotsq_space, regex=space_re, bam=True, line_dewrap=True
+    ),
     parser.Parser(
         "cotsq_atk",
         atk,

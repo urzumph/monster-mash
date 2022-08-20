@@ -317,7 +317,7 @@ CHARACTER_DATATYPES = {
     "init": INTEGER,
     "senses": OPTIONAL_ARBITRARY_STRING,
     "attack": ARBITRARY_STRING,
-    "fullAttack": ARBITRARY_STRING,
+    "fullAttack": OPTIONAL_ARBITRARY_STRING,
     "space": DataType(None, is_integer, default=default_space),
     "reach": DataType(None, is_integer, default=default_reach),
     "bab": OPTIONAL_NULLABLE_NUMBER,

@@ -11,7 +11,12 @@ from selenium.webdriver.chrome.service import Service
 
 chrome_service = Service("/snap/bin/chromium.chromedriver")
 
-MODES = [parsers.etum_mode, parsers.cotsq_mode, parsers.srd_mode]
+MODES = [
+    parsers.etum_mode,
+    parsers.cotsq_mode,
+    parsers.srd_mode,
+    parsers.cotsq_long_mode,
+]
 
 
 def parse(intext):

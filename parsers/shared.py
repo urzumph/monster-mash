@@ -7,12 +7,14 @@ NUMBER_OR_DASH = "[–—\-\dØ]"
 ALIGNMENT = "(?:[CNL][GNE])|N"
 BONUS_OR_DASH = "[\+\-]?[\d\—Ø]+"
 DIE_SET = "(\d+)d\d+[+-–]?\d*"
-SKILL_SPLIT = re.compile("^\s*(.+?)\s*([+\-]\d+)[,;]?\s*")
-SQUARES = re.compile("\s*\(\d+ squares\)")
-EMPTY_LINE = re.compile("^\s*$")
+
 
 # Pre-defined regular expressions
 RE_SEMICOLON = re.compile(";")
+SKILL_SPLIT = re.compile("^\s*(.+?)\s*([+\-]\d+)[,;]?\s*")
+SQUARES = re.compile("\s*\(\d+ squares\)")
+EMPTY_LINE = re.compile("^\s*$")
+COLON = re.compile(":")
 
 # Functions
 
@@ -56,6 +58,7 @@ def space(charsheet, rematch, **kwargs):
 
 
 def inner_skills(charsheet, text, **kwargs):
+    logging.debug(f"shared.inner_skills(charsheet, '{text}')")
     rxi = utils.RegexIter(text, SKILL_SPLIT)
     for m in iter(rxi):
         charsheet["skills"][m.group(1)] = m.group(2)
@@ -71,3 +74,10 @@ def speed(charsheet, rematch, **kwargs):
 
 def discard(charsheet, text, **kwargs):
     logging.debug("shared.discard: discarding '%s'", text)
+
+
+def cotsq_space(charsheet, rematch, **kwargs):
+    first = int(rematch.group(1))
+    second = int(rematch.group(2))
+    charsheet["space"] = max(first, second)
+    charsheet["reach"] = utils.maybe_int(rematch.group(3))
