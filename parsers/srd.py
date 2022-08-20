@@ -67,7 +67,10 @@ feats_re = re.compile("^\s*Feats:\s*(.*)")
 
 generic_moves = r"(.+?) \(?(Su|Ex|Traits)\)?"
 generic_moves_re = re.compile(generic_moves)
-moves_re = re.compile(f"^(?:{generic_moves}|Spells|Spell-Like Abilities)")
+spells_known = r".*? Spells Known \([^\)]+\)"
+moves_re = re.compile(
+    f"^(?:{generic_moves}|{spells_known}|Spells|Spell-Like Abilities|Skills)"
+)
 
 # Alignment:	Always chaotic evil
 alignment_re = re.compile("^\s*Alignment:\s*(.*)")
@@ -148,6 +151,6 @@ parsers = [
         moves,
         regex=moves_re,
         accumulate=True,
-        accum_end_regex=moves_re,
+        accum_end_regex=shared.EMPTY_LINE,
     ),
 ]

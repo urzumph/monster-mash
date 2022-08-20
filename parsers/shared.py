@@ -9,6 +9,7 @@ BONUS_OR_DASH = "[\+\-]?[\d\—Ø]+"
 DIE_SET = "(\d+)d\d+[+-–]?\d*"
 SKILL_SPLIT = re.compile("^\s*(.+?)\s*([+\-]\d+)[,;]?\s*")
 SQUARES = re.compile("\s*\(\d+ squares\)")
+EMPTY_LINE = re.compile("^\s*$")
 
 # Pre-defined regular expressions
 RE_SEMICOLON = re.compile(";")

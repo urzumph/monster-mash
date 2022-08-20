@@ -56,7 +56,17 @@
     "Spells":{
         "name": "Spells",
         "type": "Misc",
-        "desc": "Driders cast spells as 6th-level clerics, wizards, or sorcerers. Drider clerics can choose from the following domains: Chaos, Destruction, Evil, and Trickery. The typical spells prepared shown here are for a drider sorcerer. Typical Sorcerer Spells Known (6/7/6/4, base save DC 13 + spell level) 0—daze, detect magic, ghost sound, mage hand, ray of frost, read magic, resistance; 1st—mage armor, magic missile, ray of enfeeblement, silent image; 2nd— invisibility, web; 3rd—lightning bolt. Skills A drider has a +4 racial bonus on Hide and Move Silently checks. It has a +8 racial bonus on Climb checks and can always choose to take 10 on a Climb check, even if rushed or threatened."
+        "desc": "Driders cast spells as 6th-level clerics, wizards, or sorcerers. Drider clerics can choose from the following domains: Chaos, Destruction, Evil, and Trickery. The typical spells prepared shown here are for a drider sorcerer."
+        },
+    "Typical Sorcerer Spells Known (6/7/6/4, base save DC 13 + spell level)":{
+        "name": "Typical Sorcerer Spells Known (6/7/6/4, base save DC 13 + spell level)",
+        "type": "Misc",
+        "desc": "0—daze, detect magic, ghost sound, mage hand, ray of frost, read magic, resistance; 1st—mage armor, magic missile, ray of enfeeblement, silent image; 2nd— invisibility, web; 3rd—lightning bolt."
+        },
+    "Skills":{
+        "name": "Skills",
+        "type": "Misc",
+        "desc": "A drider has a +4 racial bonus on Hide and Move Silently checks. It has a +8 racial bonus on Climb checks and can always choose to take 10 on a Climb check, even if rushed or threatened."
         }
     }
 }

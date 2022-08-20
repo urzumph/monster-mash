@@ -102,9 +102,9 @@ def send_to_browser(details):
     set_val("attr_npctoucharmorclass", str(details["ac"]["touch"]))
     set_val("attr_npcflatfootarmorclass", str(details["ac"]["flat"]))
     # Special Qualities
+    set_in_roll20("attr_npcspecialattacks", details, "sa")
     set_in_roll20("attr_npcspecialqualities", details, "sq")
     # Saves
-    # TODO - alter set_in_roll20 to permit an array of indexes and KeyError check the whole set
     set_in_roll20("attr_npcfortsave", details["saves"], "fort")
     set_in_roll20("attr_npcrefsave", details["saves"], "ref")
     set_in_roll20("attr_npcwillsave", details["saves"], "will")
