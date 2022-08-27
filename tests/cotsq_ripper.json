@@ -1,0 +1,56 @@
+{
+"name":"Ripper",
+"type": "magical beast",
+"size": "Large",
+"hd": 10,
+"hp": 108,
+"init": "+1",
+"speed": "40 ft.",
+"ac": {
+    "base": "17",
+    "touch": "9",
+    "flat": "16"
+    },
+"saves": {
+    "fort": "+12",
+    "ref": "+8",
+    "will": "+6"
+    },
+"alignment": "CE",
+"abilities": {
+    "str": 26,
+    "dex": 13,
+    "con": 20,
+    "int": 5,
+    "wis": 12,
+    "cha": 8
+    },
+"skills": {
+    "Hide": "+8",
+    "Listen": "+6",
+    "Move Silently": "+6",
+    "Spot": "+7"
+    },
+"feats": "Alertness, Dodge, Iron Will",
+"attack": "+16 melee (1d8+8, 2 tentacles) and +11 melee (2d6+4, bite)",
+"fullAttack": "+16 melee (1d8+8, 2 tentacles) and +11 melee (2d6+4, bite)",
+"sa": "smite good",
+"sq": "cold resistance 15, displacement, DR 5/+2, fire resistance 15, resistance to ranged attacks, SR 20",
+"moves": {
+    "Displacement":{
+        "name": "Displacement",
+        "type": "Su",
+        "desc": "Any melee or ranged attack directed at Ripper has a 50% miss chance unless the attacker can locate the beast by some means other than sight. A true seeing effect allows the user to see the beast’s position, but see invisibility has no effect."
+        },
+    "Resistance to Ranged Attacks":{
+        "name": "Resistance to Ranged Attacks",
+        "type": "Su",
+        "desc": "A displacer beast gains a +2 resistance bonus on saves against any ranged spell or ranged magical attack that specifically targets it, except for ranged touch attacks."
+        },
+    "Smite Good":{
+        "name": "Smite Good",
+        "type": "Su",
+        "desc": "Once per day, Ripper gains a +10 bonus on a single damage roll against a good foe."
+        }
+    }
+}

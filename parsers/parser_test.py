@@ -65,6 +65,21 @@ class TestParser(unittest.TestCase):
         )
         self.assertEqual(self.call_count(), 1)
 
+    def test_parser_bam_no_infinite_loop(self):
+        doc = parser.Document(["012", "abc"])
+        matcher = re.compile("a?")
+        pobj = parser.Parser(self.id(), self.expect("a"), regex=matcher, bam=True)
+        doc.parse([pobj], None)
+        self.assertEqual(
+            doc.stats(),
+            [
+                {"string": "012", "matched": False, "matcher": None},
+                {"string": "a", "matched": True, "matcher": self.id()},
+                {"string": "bc", "matched": False, "matcher": None},
+            ],
+        )
+        self.assertEqual(self.call_count(), 1)
+
     def test_parser_accum(self):
         doc = parser.Document(["012", "345", "678", "abc"])
         matcher = re.compile("^\d")

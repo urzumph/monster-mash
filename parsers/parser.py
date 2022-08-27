@@ -85,6 +85,14 @@ class Parser:
                         self.text = self.text[0 : self._end_rematch.end()]
                 else:
                     self.text = m.group(0)
+                if len(self.text) == 0:
+                    logging.warning(
+                        "WARN: 0 length match during %s.match(idx %d , frag %s), returning no-match.",
+                        self,
+                        idx,
+                        frag.string,
+                    )
+                    return False
                 to_ret = True
             else:
                 return False

@@ -5,8 +5,9 @@ from . import utils
 from . import shared
 
 # Chahir: Male human vampire Sor8; CR 10;
-name_re = re.compile("^([^:]+): (([^;]+\d[^;]*); )?(CR [^;]+;)?")
+name_re = re.compile("^([^:]+): ")
 # Medium-size outsider (chaotic, evil);
+class_re = re.compile("([^;]+); CR [^;]+;")
 # Medium-size undead;
 type_re = re.compile(
     "^\s*(Fine|Diminutive|Tiny|Small|Medium|Large|Huge|Gargantuan|Colossal)(?:-size)?\s+([^;]+);"
@@ -22,10 +23,10 @@ hp_re = re.compile("^\s*hp\s*(\d+)[^;]*;")
 # Init +8;
 init_re = re.compile(f"^\s*Init\s*({shared.BONUS_OR_DASH});")
 # Spd 30 ft.;
-speed_re = re.compile("^\s*Spd\s*([^;]+);")
+speed_re = re.compile("^\s*Spd\.?\s*([^;]+);")
 # AC 23, touch 15, flat-footed 19;
 ac_re = re.compile(
-    f"^\s*AC\s*({shared.NUMBER_OR_DASH}+),\s*touch\s*({shared.NUMBER_OR_DASH}+),\s*flat-\s*footed\s*({shared.NUMBER_OR_DASH}+)[^;]*;"
+    f"^\s*AC\s*({shared.NUMBER_OR_DASH}+),\s*touch\s*({shared.NUMBER_OR_DASH}+),\s*flat-\s*foot-?\s*ed\s*({shared.NUMBER_OR_DASH}+)[^;]*;"
 )
 
 # Face/Reach 20 ft. by 20 ft./10 ft.;
@@ -109,6 +110,7 @@ def moves(charsheet, text, rematch, **kwargs):
     mname = rematch.group(1)
     move = {"name": mname, "type": rematch.group(2)}
     desc = utils.prechomp_regex(text, moves_re)
+    desc = utils.undo_word_wrap(desc)
     desc = desc.strip()
     move["desc"] = desc
     charsheet["moves"][mname] = move
@@ -118,6 +120,7 @@ parsers = [
     parser.Parser(
         "cotsq_name", shared.re_first("name"), index=0, regex=name_re, bam=True
     ),
+    parser.Parser("cotsq_class", shared.discard, regex=class_re, bam=True),
     parser.Parser("cotsq_cr", shared.discard, regex=cr_re, bam=True),
     parser.Parser("cotsq_type", mtype, regex=type_re, bam=True, line_dewrap=True),
     parser.Parser("cotsq_hd", hd, regex=hd_re, bam=True, line_dewrap=True),

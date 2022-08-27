@@ -1,0 +1,17 @@
+Ripper: Advanced fiendish displacer beast; CR 8; Large magical beast;
+HD 10d10+50; hp 108; Init +1; Spd. 40 ft.; AC 17, touch 9, flat-foot-
+ed 16; Atk +16 melee (1d8+8, 2 tentacles) and +11 melee (2d6+4, bite);
+SA smite good; SQ cold resistance 15, displacement, DR 5/+2, fire
+resistance 15, resistance to ranged attacks, SR 20; AL CE; SV Fort
++12, Ref +8, Will +6; Str 26, Dex 13, Con 20, Int 5, Wis 12, Cha 8.
+Skills and Feats: Hide +8, Listen +6, Move Silently +6, Spot +7;
+Alertness, Dodge, Iron Will.
+Displacement (Su): Any melee or ranged attack directed at Ripper
+has a 50% miss chance unless the attacker can locate the beast by
+some means other than sight. A true seeing effect allows the user to
+see the beast’s position, but see invisibility has no effect.
+Resistance to Ranged Attacks (Su): A displacer beast gains a +2
+resistance bonus on saves against any ranged spell or ranged magical
+attack that specifically targets it, except for ranged touch attacks.
+Smite Good (Su): Once per day, Ripper gains a +10 bonus on a sin-
+gle damage roll against a good foe.
