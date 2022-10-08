@@ -60,11 +60,14 @@ def iframe_switch():
     return switched
 
 
+safe_trans = str.maketrans({"\t": " "})
+
+
 def set_val(name, val):
     elem = driver.find_element("name", name)
     # Select all before sending stuff, allows us to override previous inputs
     elem.send_keys(Keys.CONTROL + "a")
-    elem.send_keys(val)
+    elem.send_keys(val.translate(safe_trans))
 
 
 def set_in_roll20(name, details, index):
