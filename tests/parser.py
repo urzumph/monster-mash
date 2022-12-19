@@ -16,23 +16,30 @@ class ParserTest(unittest.TestCase):
     tests = []
     genericParserFunction = None
 
+    def with_prefix(prefix):
+        testdir = pathlib.Path("tests/")
+        return [p.stem for p in list(testdir.glob(f"{prefix}*.txt"))]
+
     def test_parser(self):
         logging.debug(f"Starting {self.name} Parser Test")
         for t in self.tests:
-            text = pathlib.Path("tests/" + t + ".txt").read_text()
+            textpath = pathlib.Path("tests/" + t + ".txt")
+            text = textpath.read_text()
             tarr = text.split("\n")
             jt = pathlib.Path("tests/" + t + ".json").read_text()
             jres = char.Sheet()
             jres.from_json(jt)
             if self.genericParserFunction is not None:
                 doc = "Unavailable (Generic Test)"
-                logging.debug("Initiating parse of %s with genericParserFunction", text)
+                logging.debug(
+                    "Initiating parse of %s with genericParserFunction", textpath
+                )
                 result = self.genericParserFunction(tarr)
                 logging.debug("Test parse of %s complete", jt)
             else:
                 doc = parser.Document(tarr)
                 result = char.Sheet()
-                logging.debug("Initiating parse of %s with %s", text, self.parsers)
+                logging.debug("Initiating parse of %s with %s", textpath, self.name)
                 doc.parse(self.parsers, result)
                 logging.debug("Test parse of %s complete", jt)
 

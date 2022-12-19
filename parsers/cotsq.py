@@ -30,7 +30,9 @@ ac_re = re.compile(
 )
 
 # Face/Reach 20 ft. by 20 ft./10 ft.;
-space_re = re.compile("^\s*Face/Reach\s*(\d+)\s+ft\.\s+by\s+(\d+)\s+ft\./(\d+)\s+ft\.;")
+space_re = re.compile(
+    "^\s*Face/Reach:?\s*(\d+)\s+ft\.\s+by\s+(\d+)\s+ft\./(\d+)\s+ft\.;"
+)
 
 # AL CE; SV Fort +3, Ref +9, Will +11;
 alignment_re = re.compile(f"^\s*AL\s*({shared.ALIGNMENT});")

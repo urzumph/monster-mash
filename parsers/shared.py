@@ -5,7 +5,7 @@ import re
 # Regular expression reusable fragments
 NUMBER_OR_DASH = "[–—\-\dØ]"
 ALIGNMENT = "(?:[CNL][GNE])|N"
-BONUS_OR_DASH = "[\+\-]?[\d\—Ø]+"
+BONUS_OR_DASH = "[\+–—\-]?[\d\—Ø]+"
 DIE_SET = "(\d+)d\d+[+-–]?\d*"
 
 

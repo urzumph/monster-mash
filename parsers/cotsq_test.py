@@ -6,7 +6,7 @@ from . import cotsq
 class TestCotsqParser(ParserTest):
     name = "cotsq"
     parsers = cotsq.parsers
-    tests = ["cotsq_chahir", "cotsq_maurezhi", "cotsq_statue", "cotsq_ripper"]
+    tests = ParserTest.with_prefix("cotsq_")
 
 
 if __name__ == "__main__":

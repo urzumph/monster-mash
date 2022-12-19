@@ -6,7 +6,7 @@ from . import srd
 class TestSrdParser(ParserTest):
     name = "srd"
     parsers = srd.parsers
-    tests = ["srd_drider"]
+    tests = ParserTest.with_prefix("srd_")
 
 
 if __name__ == "__main__":

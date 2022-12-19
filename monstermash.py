@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 
 chrome_service = Service("/snap/bin/chromium.chromedriver")
+# "/usr/lib/chromium-browser/chromedriver")
 
 MODES = [
     parsers.etum_mode,

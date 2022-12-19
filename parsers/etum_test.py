@@ -6,7 +6,7 @@ from . import etum
 class TestEtumParser(ParserTest):
     name = "etum"
     parsers = etum.parsers
-    tests = ["etum_minotaurchief", "etum_psihulk"]
+    tests = ParserTest.with_prefix("etum_")
 
 
 if __name__ == "__main__":
